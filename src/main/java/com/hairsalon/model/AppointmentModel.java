@@ -23,4 +23,5 @@ public class AppointmentModel {
     private String status;
     private String salonName;
     private String userName;
+    private String salonAddress;
 }

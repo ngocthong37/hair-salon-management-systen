@@ -29,7 +29,7 @@ public class ProductItemController {
         return productItemService.update(json);
     }
 
-    @GetMapping("productItem/{productItemName}")
+    @GetMapping("productItem/search/{productItemName}")
     public ResponseEntity<ResponseObject> findAllByProductItemName(@PathVariable String productItemName) {
         return productItemService.findByProductItemName(productItemName);
     }

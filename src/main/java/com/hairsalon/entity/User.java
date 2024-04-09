@@ -22,6 +22,7 @@ public class User implements UserDetails {
     private String userName;
     private String email;
     private String password;
+    private String stylistName;
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Cart cart;
@@ -46,6 +47,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public String getStylistName() {
+        return userName;
     }
 
     @Override

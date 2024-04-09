@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -63,12 +64,33 @@ public class OrderService {
         }
     }
 
-    public ResponseEntity<ResponseObject> findAllByCustomerId(Integer id) {
+    public ResponseEntity<ResponseObject> findAllByCustomerId(Integer customerId) {
         Map<String, Object> results = new TreeMap<String, Object>();
-        List<Order> orderModelList = new ArrayList<>();
-        orderModelList = orderRepository.findAll();
+        List<Order> orderList = orderRepository.findAllOrderByCustomerId(customerId);
+        List<OrderModel> orderModelList = orderList.stream().map(order -> {
+            OrderModel orderModel = new OrderModel();
+            orderModel.setId(order.getId());
+            orderModel.setOrderDate(order.getOrderDate());
+            orderModel.setTotalPrice(order.getTotalPrice());
+            orderModel.setPaymentMethod(order.getPaymentMethod().getPaymentMethodName());
+            orderModel.setOrderStatus(order.getOrderStatus().getStatus());
+
+            List<OrderItemModel> orderItemModels = order.getOrderItems().stream().map(orderItem -> {
+                OrderItemModel orderItemModel = new OrderItemModel();
+                orderItemModel.setOrderItemId(orderItem.getId());
+                orderItemModel.setPrice(orderItem.getPrice());
+                orderItemModel.setQuantity(orderItem.getQuantity());
+                orderItemModel.setProductItemId(orderItem.getProductItem().getId());
+                orderItemModel.setProductItemUrl(orderItem.getProductItem().getImageUrl());
+                orderItemModel.setProductItemName(orderItem.getProductItem().getProductItemName());
+                return orderItemModel;
+            }).collect(Collectors.toList());
+            orderModel.setOrderItems(orderItemModels);
+            return orderModel;
+        }).collect(Collectors.toList());
+
         results.put("result", orderModelList);
-        if (results.size() > 0) {
+        if (!results.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", orderModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
@@ -89,10 +111,8 @@ public class OrderService {
                     Integer.parseInt(jsonObjectAppointment.get("customerId").asText()) : 1;
             Integer payId = jsonObjectAppointment.get("payId") != null ?
                     Integer.parseInt(jsonObjectAppointment.get("payId").asText()) : 1;
-            Integer totalPrice = jsonObjectAppointment.get("totalPrice") != null ?
-                    Integer.parseInt(jsonObjectAppointment.get("totalPrice").asText()) : 1;
-            Integer statusId = jsonObjectAppointment.get("status") != null ?
-                    jsonObjectAppointment.get("status").asInt() : 1;
+            Double totalPrice = jsonObjectAppointment.get("totalPrice") != null ?
+                    Double.parseDouble(jsonObjectAppointment.get("totalPrice").asText()) : 1;
             String orderDate = jsonObjectAppointment.get("orderDate") != null ?
                     jsonObjectAppointment.get("orderDate").asText() : "";
 
@@ -102,10 +122,8 @@ public class OrderService {
             Optional<User> user = userRepository.findById(customerId);
             User newUser = new User();
             newUser.setId(user.get().getId());
-
-
             OrderStatus orderStatus = new OrderStatus();
-            orderStatus.setId(statusId);
+            orderStatus.setId(1);
 
             Optional<PaymentMethod> paymentMethodModel = paymentMethodRepository.findById(payId);
             PaymentMethod paymentMethod = new PaymentMethod();

@@ -46,28 +46,43 @@ public class CartItemService {
             Integer quantity = jsonObjectCartItem.get("quantity") != null ?
                     jsonObjectCartItem.get("quantity").asInt() : 1;
 
-            Optional<Cart> cart = cartRepository.findById(cartId);
-            Optional<ProductItem> productItem = productItemRepository.findById(productItemId);
-            if (cart.isPresent() && productItem.isPresent()) {
-                CartItem cartItem = new CartItem();
-                cartItem.setCart(cart.get());
-                cartItem.setProductItem(productItem.get());
-                cartItem.setQuantity(quantity);
-                var savedCartItem = cartItemRepository.save(cartItem);
-                if (savedCartItem.getId() != null) {
-                    return ResponseEntity.status(HttpStatus.OK)
-                            .body(new ResponseObject("OK", "Successfully", ""));
+            Optional<Cart> cartOptional = cartRepository.findById(cartId);
+            Optional<ProductItem> productItemOptional = productItemRepository.findById(productItemId);
+
+            if (cartOptional.isPresent() && productItemOptional.isPresent()) {
+                Cart cart = cartOptional.get();
+                ProductItem productItem = productItemOptional.get();
+
+                Optional<CartItem> existingCartItemOptional = Optional.ofNullable(cartItemRepository.findExistCartItem(cart.getId(), productItem.getId()));
+
+                if (existingCartItemOptional.isPresent()) {
+                    // If the item already exists in the cart, update the quantity
+                    CartItem existingCartItem = existingCartItemOptional.get();
+                    existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+                    cartItemRepository.save(existingCartItem);
+                } else {
+                    // If the item doesn't exist in the cart, create a new cart item
+                    CartItem cartItem = new CartItem();
+                    cartItem.setCart(cart);
+                    cartItem.setProductItem(productItem);
+                    cartItem.setQuantity(quantity);
+                    cartItemRepository.save(cartItem);
                 }
+
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("OK", "Successfully", ""));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("ERROR", "Cart or product item not found", ""));
             }
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "An error occurred", e.getMessage()));
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseObject("ERROR", "Can not add to cart", ""));
     }
-    public ResponseEntity<ResponseObject> findAllByCustomerId(Integer cartId) {
+
+    public ResponseEntity<ResponseObject> findAllByCartId(Integer cartId) {
         List<CartItemModel> cartItemModelList = null;
         List<CartItem> cartItemList = cartItemRepository.findAllCartItemByCartId(cartId);
         cartItemModelList = cartItemList.stream().map(cartItem -> {
@@ -78,6 +93,7 @@ public class CartItemService {
                 cartItemModel.setProductItemName(cartItem.getProductItem().getProductItemName());
                 cartItemModel.setImageUrl(cartItem.getProductItem().getImageUrl());
                 cartItemModel.setPrice(cartItem.getProductItem().getPrice());
+                cartItemModel.setProductItemId(cartItem.getProductItem().getId());
             }
             return cartItemModel;
         }).toList();
@@ -96,6 +112,17 @@ public class CartItemService {
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ERROR", "Cannot found this item", ""));
     }
+
+    public ResponseEntity<ResponseObject> deleteAllCartItemByCartId(Integer cartItemId) {
+        try {
+            cartItemRepository.deleteAllCartItemByCartId(cartItemId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ERROR", e.getMessage(), ""));
+        }
+    }
+
 
     public ResponseEntity<ResponseObject> updateQuantityItem(String json) {
         ObjectMapper objectMapper = new ObjectMapper();

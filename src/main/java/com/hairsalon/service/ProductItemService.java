@@ -112,13 +112,24 @@ public class ProductItemService {
 
     public ResponseEntity<ResponseObject> findByProductItemName(String productItemName) {
         try {
-            Map<String, Object> results = new TreeMap<String, Object>();
             List<ProductItem> productItemList = productItemRepository.findByProductName(productItemName);
-            results.put("productItemList", productItemList);
-            if (results.size() > 0) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
+            List<ProductItemModel> productItemModelList = productItemList.stream().map(
+                    productItem -> {
+                        ProductItemModel productItemModel = new ProductItemModel();
+                        productItemModel.setId(productItem.getId());
+                        productItemModel.setProductItemName(productItem.getProductItemName());
+                        productItemModel.setPrice(productItem.getPrice());
+                        productItemModel.setImageUrl(productItem.getImageUrl());
+                        productItemModel.setStatus(productItem.getStatus());
+                        productItemModel.setQuantityInStock(productItem.getQuantityInStock());
+                        productItemModel.setWarrantyTime(productItem.getWarrantyTime());
+                        productItemModel.setDescription(productItem.getDescription());
+                        return productItemModel;
+                    }).collect(Collectors.toList());
+            if (!productItemModelList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", productItemModelList));
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ERROR", "Have error", ""));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
             }
         } catch (Exception e) {
             e.printStackTrace();

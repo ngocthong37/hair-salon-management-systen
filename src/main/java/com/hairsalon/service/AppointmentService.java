@@ -51,25 +51,23 @@ public class AppointmentService {
         Map<String, Object> results = new TreeMap<String, Object>();
         List<Appointment> appointmentList = null;
         appointmentList = appointmentRepository.findAll();
-
         List<AppointmentModel> appointmentModelList = appointmentList.stream()
                         .map(appointment -> {
                             AppointmentModel appointmentModel = new AppointmentModel();
                             appointmentModel.setId(appointment.getId());
-                            appointmentModel.setCustomerName(appointment.getUser().getUsername());
+                            appointmentModel.setCustomerName(appointment.getCustomer().getUsername());
                             appointmentModel.setAppointmentTime(appointment.getAppointmentTime());
                             appointmentModel.setAppointmentDate(appointment.getAppointmentDate());
                             appointmentModel.setSalonName(appointment.getSalon().getSalonName());
                             appointmentModel.setUserName(appointment.getUser().getUsername());
                             appointmentModel.setServiceName(appointment.getServiceHair().getServiceName());
                             appointmentModel.setStatus(appointment.getAppointmentStatus().getStatus());
+                            appointmentModel.setSalonAddress(appointment.getSalon().getAddress());
                             return appointmentModel;
                         }).collect(Collectors.toList());
 
-        results.put("appointmentList", appointmentModelList);
-
-        if (results.size() > 0) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
+        if (appointmentModelList.size() > 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", appointmentModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
         }
@@ -88,8 +86,6 @@ public class AppointmentService {
                     Integer.parseInt(jsonObjectAppointment.get("customerId").asText()) : 1;
             Integer serviceId = jsonObjectAppointment.get("serviceId") != null ?
                     jsonObjectAppointment.get("serviceId").asInt() : 1;
-            Integer statusId = jsonObjectAppointment.get("statusId") != null ?
-                    jsonObjectAppointment.get("statusId").asInt() : 1;
             Integer salonId = jsonObjectAppointment.get("salonId") != null ?
                     jsonObjectAppointment.get("salonId").asInt() : 1;
             String appointmentDate = jsonObjectAppointment.get("appointmentDate") != null ?
@@ -111,7 +107,7 @@ public class AppointmentService {
             serviceHair.setId(hairServiceModel.get().getId());
             serviceHair.setServiceName(hairServiceModel.get().getServiceName());
 
-            Optional<AppointmentStatus> appointmentStatusModel = appointmentStatusRepository.findById(statusId);
+            Optional<AppointmentStatus> appointmentStatusModel = appointmentStatusRepository.findById(1);
             AppointmentStatus appointmentStatus = new AppointmentStatus();
             appointmentStatus.setId(appointmentStatusModel.get().getId());
             appointmentStatus.setStatus(appointmentStatusModel.get().getStatus());
@@ -182,10 +178,24 @@ public class AppointmentService {
         Map<String, Object> results = new TreeMap<String, Object>();
         List<Appointment> appointmentList = null;
         appointmentList = appointmentRepository.findAppointmentByCustomerId(customerId);
-        results.put("appointmentList", appointmentList);
 
-        if (results.size() > 0) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
+        List<AppointmentModel> appointmentModelList = appointmentList.stream()
+                .map(appointment -> {
+                    AppointmentModel appointmentModel = new AppointmentModel();
+                    appointmentModel.setId(appointment.getId());
+                    appointmentModel.setCustomerName(appointment.getCustomer().getUsername());
+                    appointmentModel.setAppointmentTime(appointment.getAppointmentTime());
+                    appointmentModel.setAppointmentDate(appointment.getAppointmentDate());
+                    appointmentModel.setSalonName(appointment.getSalon().getSalonName());
+                    appointmentModel.setUserName(appointment.getUser().getStylistName());
+                    appointmentModel.setServiceName(appointment.getServiceHair().getServiceName());
+                    appointmentModel.setStatus(appointment.getAppointmentStatus().getStatus());
+                    appointmentModel.setSalonAddress(appointment.getSalon().getAddress());
+                    return appointmentModel;
+                }).collect(Collectors.toList());
+
+        if (appointmentModelList.size() > 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", appointmentModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
         }

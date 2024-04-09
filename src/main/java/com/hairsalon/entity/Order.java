@@ -29,14 +29,13 @@ public class Order extends BaseEntity{
     @JoinColumn(name = "pay_id")
     private PaymentMethod paymentMethod;
     @Column(name = "total_price")
-    private Integer totalPrice;
+    private Double totalPrice;
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "order_status_id")
     private OrderStatus orderStatus;
     @Column(name = "order_date")
     private LocalDate orderDate;
-    @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true,
             cascade = CascadeType.ALL)
     private Collection<OrderItem> orderItems;

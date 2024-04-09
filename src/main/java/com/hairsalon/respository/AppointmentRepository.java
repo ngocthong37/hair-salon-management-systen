@@ -16,7 +16,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> findAppointmentByStatusId(@Param("statusId") Integer statusId);
 
 
-    @Query(value = "select A from Appointment A where A.customer.id = :customerId")
+    @Query("SELECT A FROM Appointment A " +
+            "WHERE A.customer.id = :customerId " +
+            "AND A.appointmentStatus.id = 1 " +
+            "AND FUNCTION('GREATEST', TIMESTAMP(CONCAT(A.appointmentDate, ' ', A.appointmentTime)), CURRENT_TIMESTAMP()) > CURRENT_TIMESTAMP() " +
+            "ORDER BY FUNCTION('ABS', FUNCTION('TIMESTAMPDIFF', SECOND, " +
+            "TIMESTAMP(CONCAT(A.appointmentDate, ' ', A.appointmentTime)), CURRENT_TIMESTAMP))")
     List<Appointment> findAppointmentByCustomerId(@Param("customerId") Integer customerId);
+
+
+
 
 }

@@ -37,7 +37,7 @@ public class CustomerController {
         return orderService.order(json);
     }
 
-    @GetMapping("orders/{customerId}")
+    @GetMapping("orders/getAllOrdersByCustomerId/{customerId}")
     public ResponseEntity<ResponseObject> findAllOrderByCustomerId(@PathVariable Integer customerId) {
         return orderService.findAllByCustomerId(customerId);
     }
@@ -47,6 +47,11 @@ public class CustomerController {
         return appointmentService.getAllByCustomerId(id);
     }
 
+    @PutMapping("appointments/update-status")
+    ResponseEntity<Object> updateStatusCodeAppointment(@RequestBody String json) {
+        return appointmentService.updateStatusAppointment(json);
+    }
+
     @PostMapping("customer/addToCart")
     public ResponseEntity<ResponseObject> addToCart(@RequestBody String json) {
         return cartItemService.addToCart(json);
@@ -54,13 +59,19 @@ public class CustomerController {
 
     @GetMapping("customer/findAllCartItems/{cartId}")
     public ResponseEntity<ResponseObject> findAllCartItem(@PathVariable Integer cartId ) {
-        return cartItemService.findAllByCustomerId(cartId);
+        return cartItemService.findAllByCartId(cartId);
     }
 
     @DeleteMapping("customer/deleteCartItem/{id}")
     public ResponseEntity<ResponseObject> deleteCartItemById(@PathVariable Integer id) {
         return cartItemService.deleteCartItem(id);
     }
+
+    @DeleteMapping("customer/deleteAllCartItemByCartId/{cartId}")
+    public ResponseEntity<ResponseObject> deleteAllCartItemByCartId(@PathVariable Integer cartId) {
+        return cartItemService.deleteAllCartItemByCartId(cartId);
+    }
+
 
     @PutMapping("customer/updateQuantityCartItem")
     public ResponseEntity<ResponseObject> updateQuantityCartItem(@RequestBody String json) {
