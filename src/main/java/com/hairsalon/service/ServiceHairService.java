@@ -2,6 +2,7 @@ package com.hairsalon.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.hairsalon.entity.ProductImage;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.entity.ServiceHair;
 import com.hairsalon.model.HairServiceModel;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -19,6 +21,9 @@ import java.util.*;
 public class ServiceHairService {
     @Autowired
     private ServiceHairRepository serviceHairRepository;
+
+    @Autowired
+    private StorageService storageService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -79,29 +84,46 @@ public class ServiceHairService {
     }
 
     public ResponseEntity<Object> add(String json) {
-//        JsonNode jsonNode;
-//        JsonMapper jsonMapper = new JsonMapper();
-//        try {
-//            jsonNode = jsonMapper.readTree(json);
-//            String serviceName = jsonNode.get("serviceName") != null ? jsonNode.get("serviceName").asText() : "";
-//            Double price = jsonNode.get("price") != null ? jsonNode.get("price").asDouble() : null;
-//            String description = jsonNode.get("description") != null ? jsonNode.get("description").asText() : "";
-//            String url = jsonNode.get("url") != null ? jsonNode.get("url").asText() : "";
-//            ServiceHair serviceHair = new ServiceHair();
-//            serviceHair.setServiceName(serviceName);
-//            serviceHair.setDescription(description);
-//            serviceHair.setPrice(price);
-//            serviceHair.setUrl(url);
-//            if (serviceHairImp.add(serviceHair) < 0) {
-//                return ResponseEntity.status(HttpStatus.OK)
-//                        .body(new ResponseObject("ERROR", "Have error when add service hair", ""));
-//            }
-//        }
-//        catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
-//        }
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+        JsonNode jsonNode;
+        JsonMapper jsonMapper = new JsonMapper();
+        try {
+            jsonNode = jsonMapper.readTree(json);
+            String serviceName = jsonNode.get("serviceName") != null ? jsonNode.get("serviceName").asText() : "";
+            Double price = jsonNode.get("price") != null ? jsonNode.get("price").asDouble() : null;
+            String description = jsonNode.get("description") != null ? jsonNode.get("description").asText() : "";
+            String url = jsonNode.get("url") != null ? jsonNode.get("url").asText() : "";
+            ServiceHair serviceHair = new ServiceHair();
+            serviceHair.setServiceName(serviceName);
+            serviceHair.setDescription(description);
+            serviceHair.setPrice(price);
+            serviceHair.setUrl(url);
+            ServiceHair saveServiceHair = serviceHairRepository.save(serviceHair);
+            if (saveServiceHair.getId() > 0) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("ERROR", "Have error when add service hair", ""));
+            }
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
+        }
     }
+
+//    public List<String> uploadImage(List<MultipartFile > files, String namePath, Integer quotationId) {
+//        List<String> imageUrls;
+//
+//        imageUrls = storageService.uploadImages(files, namePath);
+//        List<ProductImage> productImageList = productImageRepository.findByQuotationId(quotationId);
+//
+//        for (int i = 0; i < imageUrls.size(); i++) {
+//            quotationRepository.updateImage(imageUrls.get(i), quotationId, productImageList.get(i).getId());
+//        }
+//        quotationRepository.updateDefaultImage(imageUrls.get(0), quotationId);
+//        return imageUrls;
+//    }
+
 
     public ResponseEntity<Object> update(String json) {
 //        JsonNode jsonNode;

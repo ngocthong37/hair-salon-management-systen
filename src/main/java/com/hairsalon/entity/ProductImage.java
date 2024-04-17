@@ -16,5 +16,4 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String imageUrl;
-
 }
