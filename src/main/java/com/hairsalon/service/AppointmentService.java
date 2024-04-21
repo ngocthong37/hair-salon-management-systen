@@ -175,7 +175,6 @@ public class AppointmentService {
     }
 
     public ResponseEntity<ResponseObject> getAllByCustomerId(Integer customerId) {
-        Map<String, Object> results = new TreeMap<String, Object>();
         List<Appointment> appointmentList = null;
         appointmentList = appointmentRepository.findAppointmentByCustomerId(customerId);
 

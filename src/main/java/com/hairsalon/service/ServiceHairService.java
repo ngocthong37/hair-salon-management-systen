@@ -29,13 +29,11 @@ public class ServiceHairService {
 
 
     public ResponseEntity<ResponseObject> getAll() {
-        Map<String, Object> results = new TreeMap<String, Object>();
         List<ServiceHair> hairServiceList = null;
         hairServiceList = serviceHairRepository.findAll();
-        results.put("serviceList", hairServiceList);
 
-        if (results.size() > 0) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
+        if (!hairServiceList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", hairServiceList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
         }

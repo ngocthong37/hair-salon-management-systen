@@ -21,7 +21,6 @@ public class UserService {
     UserRepository userRepository;
 
     public ResponseEntity<ResponseObject> findAll() {
-        Map<String, Object> results = new TreeMap<String, Object>();
         List<User> userList = new ArrayList<>();
         userList = userRepository.findAll();
         List<UserModel> userModelList = userList.stream()
@@ -32,11 +31,9 @@ public class UserService {
                     userModel.setEmail(user.getEmail());
                     return userModel;
                 })
-                .collect(Collectors.toList());
-
-        results.put("userList", userModelList);
-        if (results.size() > 0) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
+                .toList();
+        if (!userModelList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", userModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
         }
