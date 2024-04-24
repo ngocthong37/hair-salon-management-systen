@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,4 +56,27 @@ public class UserService {
     }
 
 
+    public ResponseEntity<ResponseObject> findCustomerById(Integer customerId) {
+        Optional<User> customer  = userRepository.findById(customerId);
+        if (customer.isPresent()) {
+            UserModel userModel = new UserModel();
+            userModel.setId(customer.get().getId());
+            userModel.setUserName(customer.get().getCustomerName());
+            userModel.setEmail(customer.get().getUsername());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", userModel));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
+    }
+
+    public ResponseEntity<ResponseObject> findEmployeeById(Integer employeeId) {
+        Optional<User> customer  = userRepository.findById(employeeId);
+        if (customer.isPresent()) {
+            UserModel userModel = new UserModel();
+            userModel.setId(customer.get().getId());
+            userModel.setUserName(customer.get().getCustomerName());
+            userModel.setEmail(customer.get().getUsername());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", userModel));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
+    }
 }

@@ -1,7 +1,7 @@
 package com.hairsalon.controller;
 
 import com.hairsalon.entity.ResponseObject;
-import com.hairsalon.entity.ServiceHair;
+import com.hairsalon.service.AppointmentService;
 import com.hairsalon.service.RevenueService;
 import com.hairsalon.service.ServiceHairService;
 import com.hairsalon.service.UserService;
@@ -18,6 +18,9 @@ public class ManagementController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AppointmentService appointmentService;
 
     @Autowired
     RevenueService revenueService;
@@ -56,16 +59,31 @@ public class ManagementController {
         return serviceHair.update(json);
     }
 
-
     @GetMapping("customer/findAll")
     public ResponseEntity<ResponseObject> getAllCustomer() {
         return userService.findAllCustomer();
     }
 
-    @GetMapping("employee/findAll")
-    public ResponseEntity<ResponseObject> getAllEmployee() {
-        return userService.findAllEmployee();
+    @GetMapping("customer/findById/{customerId}")
+    public ResponseEntity<ResponseObject> getCustomerById(@PathVariable Integer customerId) {
+        return userService.findCustomerById(customerId);
     }
+
+    @GetMapping("employee/findById/{employeeId}")
+    public ResponseEntity<ResponseObject> getEmployeeById(@PathVariable Integer employeeId) {
+        return userService.findEmployeeById(employeeId);
+    }
+
+    @GetMapping("appointments/findAll")
+    ResponseEntity<ResponseObject> findAll() {
+        return appointmentService.getAll();
+    }
+
+    @GetMapping("appointments/{statusId}")
+    ResponseEntity<ResponseObject> getAllByStatusId(@PathVariable Integer statusId) {
+        return appointmentService.getAllByStatusId(statusId);
+    }
+
 
 
 }

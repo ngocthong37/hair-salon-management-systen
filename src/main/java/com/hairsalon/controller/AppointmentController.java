@@ -14,20 +14,14 @@ public class AppointmentController {
     @Autowired
     AppointmentService appointmentService;
 
-    @GetMapping("management/appointments/findAll")
-    ResponseEntity<ResponseObject> findAll() {
-        return appointmentService.getAll();
-    }
+
 
     @PostMapping("appointments/makeApm")
     ResponseEntity<Object> makeAppointment(@RequestBody String json) {
             return appointmentService.makeAppointment(json);
     }
 
-    @GetMapping("management/appointments/{statusId}")
-    ResponseEntity<ResponseObject> getAllByStatusId(@PathVariable Integer statusId) {
-        return appointmentService.getAllByStatusId(statusId);
-    }
+
 
 
 }
