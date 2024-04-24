@@ -18,10 +18,6 @@ public class UserController {
     @Autowired
     OrderService orderService;
 
-    @GetMapping("findAll")
-    public ResponseEntity<ResponseObject> findAllUser() {
-        return userService.findAll();
-    }
 
     @GetMapping("ordered")
     public ResponseEntity<ResponseObject> findAllOrder() {

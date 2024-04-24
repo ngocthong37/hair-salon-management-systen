@@ -20,14 +20,33 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public ResponseEntity<ResponseObject> findAll() {
+    public ResponseEntity<ResponseObject> findAllCustomer() {
         List<User> userList = new ArrayList<>();
-        userList = userRepository.findAll();
+        userList = userRepository.findAllCustomer();
         List<UserModel> userModelList = userList.stream()
                 .map(user -> {
                     UserModel userModel = new UserModel();
                     userModel.setId(user.getId());
-                    userModel.setUserName(user.getUsername());
+                    userModel.setUserName(user.getCustomerName());
+                    userModel.setEmail(user.getEmail());
+                    return userModel;
+                })
+                .toList();
+        if (!userModelList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", userModelList));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> findAllEmployee() {
+        List<User> userList = new ArrayList<>();
+        userList = userRepository.findAllEmployee();
+        List<UserModel> userModelList = userList.stream()
+                .map(user -> {
+                    UserModel userModel = new UserModel();
+                    userModel.setId(user.getId());
+                    userModel.setUserName(user.getCustomerName());
                     userModel.setEmail(user.getEmail());
                     return userModel;
                 })

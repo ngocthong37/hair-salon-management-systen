@@ -49,9 +49,10 @@ public class User implements UserDetails {
         return email;
     }
 
-    public String getStylistName() {
+    public String getCustomerName() {
         return userName;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

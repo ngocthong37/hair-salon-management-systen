@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static com.hairsalon.Enum.Permission.*;
 import static com.hairsalon.Enum.Role.ADMIN;
-import static com.hairsalon.Enum.Role.MANAGER;
+import static com.hairsalon.Enum.Role.EMPLOYEE;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -45,11 +45,11 @@ public class SecurityConfiguration {
                         "/swagger-ui.html"
                 )
                 .permitAll()
-                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                .requestMatchers("/api/v1/productItem/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                .requestMatchers(POST,"/api/v1/productItem/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
+                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), EMPLOYEE_CREATE.name())
+                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), EMPLOYEE_READ.name())
+                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), EMPLOYEE_READ.name())
+                .requestMatchers("/api/v1/productItem/**").hasAnyRole(ADMIN.name(), EMPLOYEE.name())
+                .requestMatchers(POST,"/api/v1/productItem/**").hasAnyAuthority(ADMIN_CREATE.name(), EMPLOYEE_CREATE.name())
                 .anyRequest()
                 .authenticated()
                 .and()
