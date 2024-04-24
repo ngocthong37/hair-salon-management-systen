@@ -24,7 +24,7 @@ public class UserService {
                 .map(user -> {
                     UserModel userModel = new UserModel();
                     userModel.setId(user.getId());
-                    userModel.setUserName(user.getCustomerName());
+                    userModel.setUserName(user.getName());
                     userModel.setEmail(user.getEmail());
                     return userModel;
                 })
@@ -43,7 +43,7 @@ public class UserService {
                 .map(user -> {
                     UserModel userModel = new UserModel();
                     userModel.setId(user.getId());
-                    userModel.setUserName(user.getCustomerName());
+                    userModel.setUserName(user.getName());
                     userModel.setEmail(user.getEmail());
                     return userModel;
                 })
@@ -61,7 +61,7 @@ public class UserService {
         if (customer.isPresent()) {
             UserModel userModel = new UserModel();
             userModel.setId(customer.get().getId());
-            userModel.setUserName(customer.get().getCustomerName());
+            userModel.setUserName(customer.get().getName());
             userModel.setEmail(customer.get().getUsername());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", userModel));
         }
@@ -73,7 +73,7 @@ public class UserService {
         if (customer.isPresent()) {
             UserModel userModel = new UserModel();
             userModel.setId(customer.get().getId());
-            userModel.setUserName(customer.get().getCustomerName());
+            userModel.setUserName(customer.get().getName());
             userModel.setEmail(customer.get().getUsername());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", userModel));
         }

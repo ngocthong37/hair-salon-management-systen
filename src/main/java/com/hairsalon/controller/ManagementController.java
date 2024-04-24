@@ -84,6 +84,10 @@ public class ManagementController {
         return appointmentService.getAllByStatusId(statusId);
     }
 
+    @PutMapping("appointments/update-status")
+    ResponseEntity<Object> updateStatusAppointment(@RequestBody String json) {
+        return appointmentService.updateStatusAppointment(json);
+    }
 
 
 }

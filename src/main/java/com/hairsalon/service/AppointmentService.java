@@ -48,25 +48,28 @@ public class AppointmentService {
 
 
     public ResponseEntity<ResponseObject> getAll() {
-        Map<String, Object> results = new TreeMap<String, Object>();
         List<Appointment> appointmentList = null;
         appointmentList = appointmentRepository.findAll();
         List<AppointmentModel> appointmentModelList = appointmentList.stream()
                         .map(appointment -> {
                             AppointmentModel appointmentModel = new AppointmentModel();
                             appointmentModel.setId(appointment.getId());
-                            appointmentModel.setCustomerName(appointment.getCustomer().getUsername());
+                            Optional<User> customer;
+                            Optional<User> stylist;
+                            customer = userRepository.findById(appointment.getCustomer().getId());
+                            stylist = userRepository.findById(appointment.getUser().getId());
+                            appointmentModel.setCustomerName(customer.get().getName());
                             appointmentModel.setAppointmentTime(appointment.getAppointmentTime());
                             appointmentModel.setAppointmentDate(appointment.getAppointmentDate());
                             appointmentModel.setSalonName(appointment.getSalon().getSalonName());
-                            appointmentModel.setUserName(appointment.getUser().getUsername());
+                            appointmentModel.setUserName(stylist.get().getName());
                             appointmentModel.setServiceName(appointment.getServiceHair().getServiceName());
                             appointmentModel.setStatus(appointment.getAppointmentStatus().getStatus());
                             appointmentModel.setSalonAddress(appointment.getSalon().getAddress());
                             return appointmentModel;
                         }).collect(Collectors.toList());
 
-        if (appointmentModelList.size() > 0) {
+        if (!appointmentModelList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", appointmentModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
@@ -182,18 +185,22 @@ public class AppointmentService {
                 .map(appointment -> {
                     AppointmentModel appointmentModel = new AppointmentModel();
                     appointmentModel.setId(appointment.getId());
-                    appointmentModel.setCustomerName(appointment.getCustomer().getUsername());
+                    Optional<User> customer;
+                    Optional<User> stylist;
+                    customer = userRepository.findById(appointment.getCustomer().getId());
+                    stylist = userRepository.findById(appointment.getUser().getId());
+                    appointmentModel.setCustomerName(customer.get().getName());
                     appointmentModel.setAppointmentTime(appointment.getAppointmentTime());
                     appointmentModel.setAppointmentDate(appointment.getAppointmentDate());
                     appointmentModel.setSalonName(appointment.getSalon().getSalonName());
-                    appointmentModel.setUserName(appointment.getUser().getStylistName());
+                    appointmentModel.setUserName(stylist.get().getName());
                     appointmentModel.setServiceName(appointment.getServiceHair().getServiceName());
                     appointmentModel.setStatus(appointment.getAppointmentStatus().getStatus());
                     appointmentModel.setSalonAddress(appointment.getSalon().getAddress());
                     return appointmentModel;
                 }).collect(Collectors.toList());
 
-        if (appointmentModelList.size() > 0) {
+        if (!appointmentModelList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", appointmentModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));

@@ -49,7 +49,7 @@ public class User implements UserDetails {
         return email;
     }
 
-    public String getCustomerName() {
+    public String getName() {
         return userName;
     }
 

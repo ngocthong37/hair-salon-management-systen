@@ -14,14 +14,8 @@ public class AppointmentController {
     @Autowired
     AppointmentService appointmentService;
 
-
-
     @PostMapping("appointments/makeApm")
     ResponseEntity<Object> makeAppointment(@RequestBody String json) {
             return appointmentService.makeAppointment(json);
     }
-
-
-
-
 }

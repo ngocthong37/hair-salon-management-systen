@@ -2,7 +2,6 @@ package com.hairsalon.controller;
 
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.service.AppointmentService;
-//import com.hairsalon.service.CustomerService;
 import com.hairsalon.service.CartItemService;
 import com.hairsalon.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +20,10 @@ public class CustomerController {
     @Autowired
     private CartItemService cartItemService;
 
-//    @Autowired
-//    private CustomerService customerService;
 
     @Autowired
     private AppointmentService appointmentService;
 
-//    @GetMapping("management/customer/findAll")
-//    public ResponseEntity<ResponseObject> findAllCustomer() {
-//        return customerService.findAll();
-//    }
 
     @PostMapping("customer/order")
     public ResponseEntity<ResponseObject> order(@RequestBody String json) {
@@ -40,16 +33,6 @@ public class CustomerController {
     @GetMapping("orders/getAllOrdersByCustomerId/{customerId}")
     public ResponseEntity<ResponseObject> findAllOrderByCustomerId(@PathVariable Integer customerId) {
         return orderService.findAllByCustomerId(customerId);
-    }
-
-    @GetMapping("appointments/{id}")
-    ResponseEntity<ResponseObject> getAllByCustomerId(@PathVariable Integer id) {
-        return appointmentService.getAllByCustomerId(id);
-    }
-
-    @PutMapping("appointments/update-status")
-    ResponseEntity<Object> updateStatusCodeAppointment(@RequestBody String json) {
-        return appointmentService.updateStatusAppointment(json);
     }
 
     @PostMapping("customer/addToCart")
@@ -77,5 +60,11 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> updateQuantityCartItem(@RequestBody String json) {
         return cartItemService.updateQuantityItem(json);
     }
+
+    @GetMapping("customer/findAllAppointmentByCustomerId/{id}")
+    ResponseEntity<ResponseObject> getAllAppointmentByCustomerId(@PathVariable Integer id) {
+        return appointmentService.getAllByCustomerId(id);
+    }
+
 
 }
