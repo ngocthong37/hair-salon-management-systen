@@ -17,10 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +42,8 @@ public class AppointmentService {
 
     @Autowired
     private UserRepository userRepository;
+
+
 
 
     public ResponseEntity<ResponseObject> getAll() {
@@ -104,11 +103,13 @@ public class AppointmentService {
             Salon salon = new Salon();
             salon.setId(salonModel.get().getId());
             salon.setSalonName(salonModel.get().getSalonName());
+            salon.setAddress(salonModel.get().getAddress());
 
             Optional<ServiceHair> hairServiceModel = serviceHairRepository.findById(serviceId);
             ServiceHair serviceHair = new ServiceHair();
             serviceHair.setId(hairServiceModel.get().getId());
             serviceHair.setServiceName(hairServiceModel.get().getServiceName());
+            serviceHair.setPrice(hairServiceModel.get().getPrice());
 
             Optional<AppointmentStatus> appointmentStatusModel = appointmentStatusRepository.findById(1);
             AppointmentStatus appointmentStatus = new AppointmentStatus();
@@ -146,12 +147,17 @@ public class AppointmentService {
 
             Appointment savedAppointment = appointmentRepository.save(appointment);
 
-            String[] cc = {"n20dccn152@student.ptithcm.edu.vn"};
+            String[] cc = {};
 
             if (savedAppointment.getAppointmentTime() != null) {
-//                emailSendService.sendMail(customer.getEmail(), cc, "Lịch hẹn của bạn đã được " +
-//                        "ghi lại", "Cảm ơn bé: " + customer.getCustomerName()  + " đã tin tưởng dịch vụ của chúng tôi." +
-//                        " Vui lòng để ý điện thoại để nhận được những thông báo sớm nhất.");
+                Map<String, Object> model = new HashMap<>();
+                model.put("nameSalon", savedAppointment.getSalon().getSalonName());
+                model.put("nameService", savedAppointment.getServiceHair().getServiceName());
+                model.put("price", savedAppointment.getServiceHair().getPrice() + " VND");
+                model.put("appointmentTime", savedAppointment.getAppointmentTime());
+                model.put("appointmentDate", savedAppointment.getAppointmentDate());
+                model.put("salonAddress", savedAppointment.getSalon().getAddress());
+                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt lịch thành công", model);
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("OK", "Successfully", ""));
             } else {

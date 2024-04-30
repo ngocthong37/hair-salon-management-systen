@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hairsalon.entity.Product;
 import com.hairsalon.entity.ProductItem;
 import com.hairsalon.entity.ResponseObject;
+import com.hairsalon.entity.User;
 import com.hairsalon.model.ProductItemModel;
 import com.hairsalon.respository.ProductItemRepository;
+import com.hairsalon.respository.UserRepository;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,8 +24,18 @@ public class ProductItemService {
     @Autowired
     private ProductItemRepository productItemRepository;
 
+    @Autowired
+    private StorageService storageService;
+
+    @Autowired
+    private EmailSendService emailSendService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
     public ResponseEntity<ResponseObject> findAll() {
-        List<ProductItem> productItemList = productItemRepository.findAll();
+        List<ProductItem> productItemList = productItemRepository.findAllProductItem();
         List<ProductItemModel> productItemModelList = productItemList.stream().map(
                 productItem -> {
                     ProductItemModel productItemModel = new ProductItemModel();
@@ -53,7 +67,6 @@ public class ProductItemService {
             Integer quantity = jsonNode.get("quantity") != null ? jsonNode.get("quantity").asInt() : -1;
             Integer productId = jsonNode.get("productId") != null ? jsonNode.get("productId").asInt() : -1;
             Integer warrantyTime = jsonNode.get("warrantyTime") != null ? jsonNode.get("warrantyTime").asInt() : -1;
-            String status = jsonNode.get("status") != null ? jsonNode.get("status").asText() : "";
             String description = jsonNode.get("description") != null ? jsonNode.get("description").asText() : "";
 
             ProductItem productItem = new ProductItem();
@@ -62,20 +75,33 @@ public class ProductItemService {
             product.setId(productId);
             productItem.setProduct(product);
             productItem.setPrice(price);
-            productItem.setStatus(status);
+            productItem.setStatus("OK");
             productItem.setQuantityInStock(quantity);
-            productItem.setStatus(status);
             productItem.setWarrantyTime(warrantyTime);
             productItem.setImageUrl(imageUrl);
             productItem.setDescription(description);
             ProductItem saveProduct = productItemRepository.save(productItem);
-            if (saveProduct.getId() == null)
+            if (saveProduct.getId() != null) {
+                List<User> customerList = userRepository.findAllCustomer();
+                String[] cc = new String[customerList.size()];
+                for (int i = 0; i < customerList.size(); i++) {
+                    User customer = customerList.get(i);
+                    cc[i] = customer.getEmail();
+                }
+                Map<String, Object> model = new HashMap<>();
+                model.put("nameProduct", saveProduct.getProductItemName());
+                model.put("price", saveProduct.getPrice() + " VND");
+                model.put("number", saveProduct.getQuantityInStock());
+                model.put("description", saveProduct.getDescription());
+//                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo sản phẩm mới", model);
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", saveProduct.getId() ));
+            }
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("ERROR", "Have error when add product item", ""));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+
     }
 
     public ResponseEntity<Object> update(String json) {
@@ -89,7 +115,7 @@ public class ProductItemService {
             Integer quantity = jsonNode.get("quantity") != null ? jsonNode.get("quantity").asInt() : -1;
             Integer productItemId = jsonNode.get("productItemId") != null ? jsonNode.get("productItemId").asInt() : -1;
             Integer warrantyTime = jsonNode.get("warrantyTime") != null ? jsonNode.get("warrantyTime").asInt() : -1;
-            String status = jsonNode.get("status") != null ? jsonNode.get("status").asText() : "";
+            String description = jsonNode.get("description") != null ? jsonNode.get("description").asText() : "";
             Optional<ProductItem> productItemOptional = productItemRepository.findById(productItemId);
             if (productItemOptional.isPresent()) {
                 ProductItem productItem = productItemOptional.get();
@@ -97,9 +123,10 @@ public class ProductItemService {
                 productItem.setPrice(price);
                 productItem.setWarrantyTime(warrantyTime);
                 productItem.setQuantityInStock(quantity);
-                productItem.setStatus(status);
                 productItem.setImageUrl(imageUrl);
+                productItem.setDescription(description);
                 productItemRepository.save(productItem);
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", productItem.getId()));
             } else {
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("ERROR", "Have error when update product item", ""));
@@ -107,7 +134,36 @@ public class ProductItemService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+
+    }
+
+    public ResponseEntity<Object> updateStatus(String json) {
+        JsonNode jsonNode;
+        JsonMapper jsonMapper = new JsonMapper();
+        try {
+            jsonNode = jsonMapper.readTree(json);
+            Integer productItemId = jsonNode.get("productItemId") != null ? jsonNode.get("productItemId").asInt() : -1;
+            Optional<ProductItem> productItemOptional = productItemRepository.findById(productItemId);
+            if (productItemOptional.isPresent()) {
+                ProductItem productItem = productItemOptional.get();
+                productItem.setStatus("NOT_OK");
+                productItemRepository.save(productItem);
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", productItem.getId()));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("ERROR", "Have error when update product item status", ""));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
+        }
+
+    }
+
+
+    public String uploadImage(MultipartFile file, String namePath, Integer serviceHairId) {
+        String imageUrl = storageService.uploadImages(file, namePath);
+        productItemRepository.updateImage(imageUrl, serviceHairId);
+        return imageUrl;
     }
 
     public ResponseEntity<ResponseObject> findByProductItemName(String productItemName) {

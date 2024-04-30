@@ -26,25 +26,19 @@ public class StorageService {
     }
 
     // Upload image to cloudinary
-    public List<String> uploadImages(List<MultipartFile> files, String namePath) {
-        List<String> imageUrls = new ArrayList<>();
+    public String uploadImages(MultipartFile file, String namePath) {
+        String imageUrl = "";
         try {
-            for (int i = 0; i < files.size(); i++) {
-                MultipartFile file = files.get(i);
-                // Tạo chuỗi ngẫu nhiên
                 String randomString = UUID.randomUUID().toString();
-                // Thêm chuỗi ngẫu nhiên vào namePath
                 String updatedNamePath = namePath + "/" + randomString;
                 Map uploadResult = this.cloudinary().uploader().upload(
                         file.getBytes(),
                         ObjectUtils.asMap("resource_type", "auto", "public_id", updatedNamePath)
                 );
-                String imageUrl = (String) uploadResult.get("secure_url");
-                imageUrls.add(imageUrl);
-            }
+                imageUrl = (String) uploadResult.get("secure_url");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return imageUrls;
+        return imageUrl;
     }
 }

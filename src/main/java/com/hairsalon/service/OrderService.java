@@ -139,12 +139,11 @@ public class OrderService {
             order.setOrderStatus(orderStatus);
             order.setOrderDate(parsedDate);
 
-            String[] cc = {"n20dccn152@student.ptithcm.edu.vn"};
+            String[] cc = {};
             List<OrderItem> orderItems = new ArrayList<>();
             if (orderItemList.isArray()) {
                 for (JsonNode orderItemJson : orderItemList) {
                     OrderItem orderItem = new OrderItem();
-                    int id = orderItemJson.get("productItemId").asInt();
                     Optional<ProductItem> productItemModel = productItemRepository.findById(orderItemJson.get("productItemId").asInt());
                     ProductItem productItem = new ProductItem();
                     productItem.setProductItemName(productItemModel.get().getProductItemName());
@@ -158,15 +157,23 @@ public class OrderService {
                     orderItems.add(orderItem);
                 }
             }
-
+            Map<String, Object> model = new HashMap<>();
             orderRepository.save(order);
             Order savedOrder = orderRepository.save(order);
-
+            model.put("orderId", savedOrder.getId());
+            model.put("totalPrice", savedOrder.getTotalPrice());
+            model.put("paymentMethod", savedOrder.getPaymentMethod().getPaymentMethodName());
+            model.put("orderDate", savedOrder.getOrderDate());
+            List<Map<String, Object>> orderItemsJSON = new ArrayList<>();
             for (OrderItem orderItem : orderItems) {
-                orderItem.setOrder(savedOrder);
-                orderItemRepository.save(orderItem);
+                Map<String, Object> orderItemJSON = new HashMap<>();
+                orderItemJSON.put("price", orderItem.getPrice());
+                orderItemJSON.put("quantity", orderItem.getQuantity());
+                orderItemJSON.put("productItemName", orderItem.getProductItem().getProductItemName());
+                orderItemsJSON.add(orderItemJSON);
             }
-
+            model.put("orderItems", orderItemsJSON);
+            emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt hàng thành công", model);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("OK", "Successfully", orderModel));
         } catch (Exception e) {

@@ -17,5 +17,14 @@ public interface ServiceHairRepository extends JpaRepository<ServiceHair, Intege
     @Query(value = "SELECT S FROM ServiceHair S WHERE S.serviceName LIKE CONCAT('%', :serviceName, '%')")
     List<ServiceHair> findByPartialServiceName(@Param("serviceName") String serviceName);
 
+    @Query(value = "SELECT S FROM ServiceHair S WHERE S.status = 'OK'")
+    List<ServiceHair> findAllServiceHair();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE ServiceHair s SET s.url = :image where s.id = :serviceHairId")
+    void updateImage(String image, Integer serviceHairId);
+
+
 
 }

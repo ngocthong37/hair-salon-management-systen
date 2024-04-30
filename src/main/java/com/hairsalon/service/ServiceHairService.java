@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hairsalon.entity.ProductImage;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.entity.ServiceHair;
+import com.hairsalon.entity.User;
 import com.hairsalon.model.HairServiceModel;
 import com.hairsalon.respository.ServiceHairRepository;
+import com.hairsalon.respository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,16 @@ public class ServiceHairService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private EmailSendService emailSendService;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     public ResponseEntity<ResponseObject> getAll() {
         List<ServiceHair> hairServiceList = null;
-        hairServiceList = serviceHairRepository.findAll();
-
+        hairServiceList = serviceHairRepository.findAllServiceHair();
         if (!hairServiceList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", hairServiceList));
         } else {
@@ -81,6 +88,13 @@ public class ServiceHairService {
 //        }
     }
 
+    public String uploadImage(MultipartFile file, String namePath, Integer serviceHairId) {
+        String imageUrl = storageService.uploadImages(file, namePath);
+        serviceHairRepository.updateImage(imageUrl, serviceHairId);
+        return imageUrl;
+    }
+
+
     public ResponseEntity<Object> add(String json) {
         JsonNode jsonNode;
         JsonMapper jsonMapper = new JsonMapper();
@@ -95,9 +109,23 @@ public class ServiceHairService {
             serviceHair.setDescription(description);
             serviceHair.setPrice(price);
             serviceHair.setUrl(url);
+            serviceHair.setStatus("OK");
             ServiceHair saveServiceHair = serviceHairRepository.save(serviceHair);
+
+
             if (saveServiceHair.getId() > 0) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+                List<User> customerList = userRepository.findAllCustomer();
+                String[] cc = new String[customerList.size()];
+                for (int i = 0; i < customerList.size(); i++) {
+                    User customer = customerList.get(i);
+                    cc[i] = customer.getEmail();
+                }
+                Map<String, Object> model = new HashMap<>();
+                model.put("name", saveServiceHair.getServiceName());
+                model.put("price", saveServiceHair.getPrice() + " VND");
+                model.put("description", saveServiceHair.getDescription());
+//                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo dịch vụ mới", model);
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", saveServiceHair.getId()));
             }
             else {
                 return ResponseEntity.status(HttpStatus.OK)
@@ -124,30 +152,56 @@ public class ServiceHairService {
 
 
     public ResponseEntity<Object> update(String json) {
-//        JsonNode jsonNode;
-//        JsonMapper jsonMapper = new JsonMapper();
-//        try {
-//            jsonNode = jsonMapper.readTree(json);
-//            Integer id = jsonNode.get("id") != null ? jsonNode.get("id").asInt() : null;
-//            String serviceName = jsonNode.get("serviceName") != null ? jsonNode.get("serviceName").asText() : "";
-//            Double price = jsonNode.get("price") != null ? jsonNode.get("price").asDouble() : null;
-//            String description = jsonNode.get("description") != null ? jsonNode.get("description").asText() : "";
-//            String url = jsonNode.get("url") != null ? jsonNode.get("url").asText() : "";
-//            ServiceHair serviceHair = new ServiceHair();
-//            serviceHair.setId(id);
-//            serviceHair.setServiceName(serviceName);
-//            serviceHair.setDescription(description);
-//            serviceHair.setPrice(price);
-//            serviceHair.setUrl(url);
-//            if (serviceHairImp.update(serviceHair) < 0) {
-//                return ResponseEntity.status(HttpStatus.OK)
-//                        .body(new ResponseObject("ERROR", "Have error when add service hair", ""));
-//            }
-//        }
-//        catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
-//        }
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", ""));
+        JsonNode jsonNode;
+        JsonMapper jsonMapper = new JsonMapper();
+        try {
+            jsonNode = jsonMapper.readTree(json);
+            Integer id = jsonNode.get("id") != null ? jsonNode.get("id").asInt() : null;
+            String serviceName = jsonNode.get("serviceName") != null ? jsonNode.get("serviceName").asText() : "";
+            Double price = jsonNode.get("price") != null ? jsonNode.get("price").asDouble() : null;
+            String description = jsonNode.get("description") != null ? jsonNode.get("description").asText() : "";
+            String url = jsonNode.get("url") != null ? jsonNode.get("url").asText() : "";
+            Optional<ServiceHair> serviceHair = serviceHairRepository.findById(id);
+            if (serviceHair.isPresent()) {
+                serviceHair.get().setServiceName(serviceName);
+                serviceHair.get().setDescription(description);
+                serviceHair.get().setPrice(price);
+                serviceHair.get().setUrl(url);
+                ServiceHair updatedServiceHair =  serviceHairRepository.save(serviceHair.get());
+                if (updatedServiceHair.getId() > 0) {
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", updatedServiceHair.getId()));
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("ERROR", "Have error when add service hair", ""));
+
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
+        }
+    }
+
+    public ResponseEntity<Object> updateStatus(String json) {
+        JsonNode jsonNode;
+        JsonMapper jsonMapper = new JsonMapper();
+        try {
+            jsonNode = jsonMapper.readTree(json);
+            Integer id = jsonNode.get("id") != null ? jsonNode.get("id").asInt() : null;
+            Optional<ServiceHair> serviceHair = serviceHairRepository.findById(id);
+            if (serviceHair.isPresent()) {
+                serviceHair.get().setStatus("NOT_OK");
+                ServiceHair updatedServiceHair =  serviceHairRepository.save(serviceHair.get());
+                if (updatedServiceHair.getId() > 0) {
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", updatedServiceHair.getId()));
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ERROR", "Have error when update status service hair", ""));
+
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
+        }
     }
 
 

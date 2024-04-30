@@ -36,7 +36,6 @@ public class Appointment extends BaseEntity{
     @JoinColumn(name = "apm_status_id")
     private AppointmentStatus appointmentStatus;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "salon_id")
     private Salon salon;

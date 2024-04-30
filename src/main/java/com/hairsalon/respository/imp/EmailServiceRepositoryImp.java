@@ -1,16 +1,18 @@
 package com.hairsalon.respository.imp;
 
 import com.hairsalon.respository.IEmailServiceRepository;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.stereotype.Repository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.mail.internet.MimeMessage;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import java.util.Map;
 
 @Transactional
 @Repository
@@ -21,25 +23,40 @@ public class EmailServiceRepositoryImp implements IEmailServiceRepository {
     @Autowired
     private JavaMailSender javaMailSender;
 
+    @Autowired
+    private Configuration config;
+
     @Override
-    public String sendMail(String to, String[] cc, String subject, String body) {
+    public String sendMail(String to, String[] cc, String subject, Map<String, Object> model) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
+//            mimeMessageHelper.addAttachment("logo.jpg", new ClassPathResource("logo.jpg"));
             mimeMessageHelper.setFrom(fromEmail);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setCc(cc);
             mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setText(body);
+            Template t;
+            if (subject.equals("Tài khoản truy cập website của bạn đã được tạo")) {
+                t = config.getTemplate("register.ftl");
+            }
+            else if (subject.equals("Thông báo sản phẩm mới")) {
+                t = config.getTemplate("email-template.ftl");
+            }
+            else if(subject.equals("Thông báo dịch vụ mới")){
+                t = config.getTemplate("notify-service.ftl");
+            }
+            else if(subject.equals("Thông báo đặt lịch thành công")) {
+                t = config.getTemplate("notify-appointment.ftl");
+            }
+            else {
+                t = config.getTemplate("notify-order.ftl");
+            }
+            String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
 
-         /*   for (int i = 0; i < file.length; i++) {
-                mimeMessageHelper.addAttachment(
-                        file[i].getOriginalFilename(),
-                        new ByteArrayResource(file[i].getBytes()));
-            }*/
-
+            mimeMessageHelper.setText(html, true);
             javaMailSender.send(mimeMessage);
 
             return "mail send";
@@ -48,5 +65,4 @@ public class EmailServiceRepositoryImp implements IEmailServiceRepository {
             throw new RuntimeException(e);
         }
     }
-
 }

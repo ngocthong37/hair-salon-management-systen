@@ -26,6 +26,7 @@ public class ServiceHair {
     private String description;
     @Column(name = "url")
     private String url;
+    private String status;
 
     @JsonIgnore
     @OneToMany(mappedBy = "serviceHair", fetch = FetchType.LAZY, orphanRemoval = true,

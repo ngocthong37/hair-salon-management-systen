@@ -1,13 +1,13 @@
 package com.hairsalon.controller;
 
 import com.hairsalon.entity.ResponseObject;
-import com.hairsalon.service.AppointmentService;
-import com.hairsalon.service.RevenueService;
-import com.hairsalon.service.ServiceHairService;
-import com.hairsalon.service.UserService;
+import com.hairsalon.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -21,6 +21,9 @@ public class ManagementController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private ProductItemService productItemService;
 
     @Autowired
     RevenueService revenueService;
@@ -49,15 +52,33 @@ public class ManagementController {
         return revenueService.getRevenueFromServiceByMonth(year, month);
     }
 
-    @PostMapping("addServiceHair")
+    @PostMapping("serviceHair/add")
     public ResponseEntity<Object> addServiceHair(@RequestBody String json) {
         return serviceHair.add(json);
     }
 
-    @PutMapping("updateServiceHair")
+    @PutMapping("serviceHair/update")
     public ResponseEntity<Object> updateServiceHair(@RequestBody String json) {
         return serviceHair.update(json);
     }
+
+    @PutMapping("serviceHair/updateStatus")
+    public ResponseEntity<Object> updateStatusServiceHair(@RequestBody String json) {
+        return serviceHair.updateStatus(json);
+    }
+
+    @PostMapping("hairService/uploadImageServiceHair")
+    public String uploadImageServiceHair(@RequestParam("namePath") String namePath, @RequestParam("file") MultipartFile file,
+                                              @RequestParam("serviceHairId") Integer serviceHairId) {
+        return serviceHair.uploadImage(file, namePath, serviceHairId);
+    }
+
+    @PostMapping("productItem/uploadImageProductItem")
+    public String uploadImageProductItem(@RequestParam("namePath") String namePath, @RequestParam("file") MultipartFile file,
+                              @RequestParam("productItemId") Integer productItemId) {
+        return productItemService.uploadImage(file, namePath, productItemId);
+    }
+
 
     @GetMapping("customer/findAll")
     public ResponseEntity<ResponseObject> getAllCustomer() {

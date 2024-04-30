@@ -19,15 +19,21 @@ public class ProductItemController {
         return productItemService.findAll();
     }
 
-    @PostMapping("productItem/add")
+    @PostMapping("management/productItem/add")
     public ResponseEntity<Object> addProductItem(@RequestBody String json) {
         return productItemService.add(json);
     }
 
-    @PutMapping("productItem/update")
+    @PutMapping("management/productItem/update")
     public ResponseEntity<Object> updateProductItem(@RequestBody String json) {
         return productItemService.update(json);
     }
+
+    @PutMapping("management/productItem/updateStatus")
+    public ResponseEntity<Object> updateProductItemStatus(@RequestBody String json) {
+        return productItemService.updateStatus(json);
+    }
+
 
     @GetMapping("productItem/search/{productItemName}")
     public ResponseEntity<ResponseObject> findAllByProductItemName(@PathVariable String productItemName) {
