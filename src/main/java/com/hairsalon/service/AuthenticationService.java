@@ -69,6 +69,7 @@ public class AuthenticationService {
         .accessToken(jwtToken)
             .refreshToken(refreshToken)
             .role(String.valueOf(user.getRole()))
+            .accountId(user.getId())
         .build();
   }
 
