@@ -33,4 +33,10 @@ public class UserController {
         return orderService.updateStatusOrder(json);
     }
 
+    @PutMapping("updateUserProfile")
+    ResponseEntity<Object> updateUserProfile(@RequestBody String json) {
+        return userService.update(json);
+    }
+
+
 }

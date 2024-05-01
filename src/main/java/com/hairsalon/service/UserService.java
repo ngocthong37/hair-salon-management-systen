@@ -1,5 +1,8 @@
 package com.hairsalon.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.hairsalon.entity.ProductItem;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.entity.User;
 import com.hairsalon.model.UserModel;
@@ -57,7 +60,7 @@ public class UserService {
 
 
     public ResponseEntity<ResponseObject> findCustomerById(Integer customerId) {
-        Optional<User> customer  = userRepository.findById(customerId);
+        Optional<User> customer = userRepository.findById(customerId);
         if (customer.isPresent()) {
             UserModel userModel = new UserModel();
             userModel.setId(customer.get().getId());
@@ -69,7 +72,7 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseObject> findEmployeeById(Integer employeeId) {
-        Optional<User> customer  = userRepository.findById(employeeId);
+        Optional<User> customer = userRepository.findById(employeeId);
         if (customer.isPresent()) {
             UserModel userModel = new UserModel();
             userModel.setId(customer.get().getId());
@@ -79,4 +82,34 @@ public class UserService {
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
     }
+
+    public ResponseEntity<Object> update(String json) {
+        JsonNode jsonNode;
+        JsonMapper jsonMapper = new JsonMapper();
+        try {
+            jsonNode = jsonMapper.readTree(json);
+            Integer id = jsonNode.get("id") != null ? jsonNode.get("id").asInt() : -1;
+            String fullName = jsonNode.get("fullName") != null ? jsonNode.get("fullName").asText() : "";
+            String address = jsonNode.get("address") != null ? jsonNode.get("address").asText() : null;
+            String phoneNumber = jsonNode.get("phoneNumber") != null ? jsonNode.get("phoneNumber").asText() : "";
+            Optional<User> userOptional = userRepository.findById(id);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.setFullName(fullName);
+                user.setAddress(address);
+                user.setPhoneNumber(phoneNumber);
+                User updatedUser = userRepository.save(user);
+                if (updatedUser.getId() > 0) {
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", user.getId()));
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ERROR", "Have error when update user", ""));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
+        }
+
+    }
+
 }

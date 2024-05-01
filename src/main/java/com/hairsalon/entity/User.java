@@ -22,7 +22,10 @@ public class User implements UserDetails {
     private String userName;
     private String email;
     private String password;
-    private String stylistName;
+    private String fullName;
+    private String phoneNumber;
+    private String address;
+    private String status;
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Cart cart;
