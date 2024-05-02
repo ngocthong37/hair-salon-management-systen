@@ -39,7 +39,7 @@ public class EmailServiceRepositoryImp implements IEmailServiceRepository {
             mimeMessageHelper.setCc(cc);
             mimeMessageHelper.setSubject(subject);
             Template t;
-            if (subject.equals("Tài khoản truy cập website của bạn đã được tạo")) {
+            if (subject.equals("Tài khoản truy cập Hair Salon của bạn đã được tạo")) {
                 t = config.getTemplate("register.ftl");
             }
             else if (subject.equals("Thông báo sản phẩm mới")) {

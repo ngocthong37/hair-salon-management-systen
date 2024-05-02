@@ -1,6 +1,10 @@
 package com.hairsalon.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.hairsalon.Enum.Role;
 import com.hairsalon.entity.*;
 import com.hairsalon.Enum.TokenType;
 import com.hairsalon.respository.CartRepository;
@@ -12,12 +16,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +36,7 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  private final EmailSendService emailSendService;
 
   @Autowired
   private CartRepository cartRepository;
@@ -47,9 +57,52 @@ public class AuthenticationService {
     var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
     return AuthenticationResponse.builder()
+            .role(savedUser.getRole().toString())
+            .accountId(savedUser.getId())
         .accessToken(jwtToken)
             .refreshToken(refreshToken)
         .build();
+  }
+
+  public AuthenticationResponse addEmployee(String json) {
+    JsonNode jsonNode;
+    JsonMapper jsonMapper = new JsonMapper();
+    try {
+      jsonNode = jsonMapper.readTree(json);
+      Random random = new Random();
+      var password = String.format("%08d", random.nextInt(100000000));
+      String fullName = jsonNode.get("fullName") != null ? jsonNode.get("fullName").asText() : "";
+      String email = jsonNode.get("email") != null ? jsonNode.get("email").asText() : "";
+      String address = jsonNode.get("address") != null ? jsonNode.get("address").asText() : null;
+      String phoneNumber = jsonNode.get("phoneNumber") != null ? jsonNode.get("phoneNumber").asText() : "";
+      var user = User.builder()
+              .userName("username")
+              .email(email)
+              .password(passwordEncoder.encode(password))
+              .role(Role.EMPLOYEE)
+              .address(address)
+              .fullName(fullName)
+              .phoneNumber(phoneNumber)
+              .status("OK")
+              .build();
+      var savedUser = repository.save(user);
+      if (savedUser.getPassword() != null) {
+        String[] cc = {};
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", savedUser.getUsername());
+        model.put("password", password);
+        emailSendService.sendMail(savedUser.getEmail(), cc, "Tài khoản truy cập Hair Salon của bạn đã được tạo", model);
+      }
+      var jwtToken = jwtService.generateToken(user);
+      var refreshToken = jwtService.generateRefreshToken(user);
+      saveUserToken(savedUser, jwtToken);
+      return AuthenticationResponse.builder()
+              .accessToken(jwtToken)
+              .refreshToken(refreshToken)
+              .build();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {

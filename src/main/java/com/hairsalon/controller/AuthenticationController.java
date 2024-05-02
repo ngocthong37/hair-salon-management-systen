@@ -28,6 +28,14 @@ public class AuthenticationController {
   ) {
     return ResponseEntity.ok(service.register(request));
   }
+
+  @PostMapping("/addEmployee")
+  public ResponseEntity<AuthenticationResponse> addEmployee(
+         @RequestBody String json
+  ) {
+    return ResponseEntity.ok(service.addEmployee(json));
+  }
+
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request
