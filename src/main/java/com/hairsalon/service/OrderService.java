@@ -166,6 +166,8 @@ public class OrderService {
             model.put("orderDate", savedOrder.getOrderDate());
             List<Map<String, Object>> orderItemsJSON = new ArrayList<>();
             for (OrderItem orderItem : orderItems) {
+                orderItem.setOrder(savedOrder);
+                orderItemRepository.save(orderItem);
                 Map<String, Object> orderItemJSON = new HashMap<>();
                 orderItemJSON.put("price", orderItem.getPrice());
                 orderItemJSON.put("quantity", orderItem.getQuantity());
@@ -173,9 +175,9 @@ public class OrderService {
                 orderItemsJSON.add(orderItemJSON);
             }
             model.put("orderItems", orderItemsJSON);
-            emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt hàng thành công", model);
+//            emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt hàng thành công", model);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("OK", "Successfully", orderModel));
+                    .body(new ResponseObject("OK", "Successfully", ""));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "An error occurred", e.getMessage()));
