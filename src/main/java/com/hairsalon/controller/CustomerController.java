@@ -30,6 +30,11 @@ public class CustomerController {
         return orderService.order(json);
     }
 
+    @PutMapping("appointments/update-status")
+    ResponseEntity<Object> updateStatusAppointment(@RequestBody String json) {
+        return appointmentService.updateStatusAppointment(json);
+    }
+
     @GetMapping("orders/getAllOrdersByCustomerId/{customerId}")
     public ResponseEntity<ResponseObject> findAllOrderByCustomerId(@PathVariable Integer customerId) {
         return orderService.findAllByCustomerId(customerId);
