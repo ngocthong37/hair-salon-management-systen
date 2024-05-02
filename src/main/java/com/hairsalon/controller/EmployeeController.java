@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/api/v1/")
 public class EmployeeController {
-
+    @Autowired
     UserService userService;
     @GetMapping("employee/findAll")
     public ResponseEntity<ResponseObject> findAllEmployee() {
