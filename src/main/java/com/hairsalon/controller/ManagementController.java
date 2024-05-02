@@ -84,6 +84,10 @@ public class ManagementController {
     public ResponseEntity<ResponseObject> getAllCustomer() {
         return userService.findAllCustomer();
     }
+    @GetMapping("employee/findAll")
+    public ResponseEntity<ResponseObject> findAllEmployee() {
+        return userService.findAllEmployee();
+    }
 
     @GetMapping("customer/findById/{customerId}")
     public ResponseEntity<ResponseObject> getCustomerById(@PathVariable Integer customerId) {
@@ -93,6 +97,11 @@ public class ManagementController {
     @GetMapping("employee/findById/{employeeId}")
     public ResponseEntity<ResponseObject> getEmployeeById(@PathVariable Integer employeeId) {
         return userService.findEmployeeById(employeeId);
+    }
+
+    @PostMapping ("employee/updateStatusUser")
+    public ResponseEntity<Object> updateStatusUser(@RequestBody String json) {
+        return userService.updateStatusUser(json);
     }
 
     @GetMapping("appointments/findAll")
