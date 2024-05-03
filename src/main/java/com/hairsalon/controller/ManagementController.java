@@ -110,6 +110,11 @@ public class ManagementController {
         return appointmentService.getAllAppointmentForEmployee(employeeId);
     }
 
+    @GetMapping ("employee/findAllAppointmentDone/{employeeId}")
+    public ResponseEntity<ResponseObject> findAllAppointmentDoneByEmployee(@PathVariable Integer employeeId) {
+        return appointmentService.getAllAppointmentDoneByEmployee(employeeId);
+    }
+
     @GetMapping("appointments/findAll")
     ResponseEntity<ResponseObject> findAll() {
         return appointmentService.getAll();

@@ -243,6 +243,36 @@ public class AppointmentService {
         }
     }
 
+    public ResponseEntity<ResponseObject> getAllAppointmentDoneByEmployee(Integer employeeId) {
+        List<Appointment> appointmentList = null;
+        appointmentList = appointmentRepository.findAppointmentDoneByEmployee(employeeId);
+
+        List<AppointmentModel> appointmentModelList = appointmentList.stream()
+                .map(appointment -> {
+                    AppointmentModel appointmentModel = new AppointmentModel();
+                    appointmentModel.setId(appointment.getId());
+                    Optional<User> customer;
+                    Optional<User> stylist;
+                    customer = userRepository.findById(appointment.getCustomer().getId());
+                    stylist = userRepository.findById(appointment.getUser().getId());
+                    appointmentModel.setCustomerName(customer.get().getName());
+                    appointmentModel.setAppointmentTime(appointment.getAppointmentTime());
+                    appointmentModel.setAppointmentDate(appointment.getAppointmentDate());
+                    appointmentModel.setSalonName(appointment.getSalon().getSalonName());
+                    appointmentModel.setUserName(stylist.get().getName());
+                    appointmentModel.setServiceName(appointment.getServiceHair().getServiceName());
+                    appointmentModel.setStatus(appointment.getAppointmentStatus().getStatus());
+                    appointmentModel.setSalonAddress(appointment.getSalon().getAddress());
+                    return appointmentModel;
+                }).collect(Collectors.toList());
+
+        if (!appointmentModelList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", appointmentModelList));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
+        }
+    }
+
 
     public ResponseEntity<Object> updateStatusAppointment(String json) {
         JsonNode jsonNode;
