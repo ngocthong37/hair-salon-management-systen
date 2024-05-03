@@ -48,6 +48,10 @@ public class AuthenticationService {
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(request.getRole())
+            .status("OK")
+            .phoneNumber("null")
+            .address("null")
+            .fullName("null")
         .build();
     var savedUser = repository.save(user);
     Cart cart = new Cart();
