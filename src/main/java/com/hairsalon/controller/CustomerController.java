@@ -1,9 +1,7 @@
 package com.hairsalon.controller;
 
 import com.hairsalon.entity.ResponseObject;
-import com.hairsalon.service.AppointmentService;
-import com.hairsalon.service.CartItemService;
-import com.hairsalon.service.OrderService;
+import com.hairsalon.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,6 +22,17 @@ public class CustomerController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private NewService newService;
+
+
+    @GetMapping("news/getAll")
+    public ResponseEntity<ResponseObject> getAllNews() {
+        return newService.getAll();
+    }
 
     @PostMapping("customer/order")
     public ResponseEntity<ResponseObject> order(@RequestBody String json) {
@@ -54,6 +63,10 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> deleteCartItemById(@PathVariable Integer id) {
         return cartItemService.deleteCartItem(id);
     }
+    @GetMapping("customer/getCartByCustomerId/{customerId}")
+    public Integer getCartByCustomerId(@PathVariable Integer customerId) {
+        return cartItemService.getCustomerCarts(customerId);
+    }
 
     @DeleteMapping("customer/deleteAllCartItemByCartId/{cartId}")
     public ResponseEntity<ResponseObject> deleteAllCartItemByCartId(@PathVariable Integer cartId) {
@@ -70,6 +83,17 @@ public class CustomerController {
     ResponseEntity<ResponseObject> getAllAppointmentByCustomerId(@PathVariable Integer id) {
         return appointmentService.getAllByCustomerId(id);
     }
+
+    @PutMapping("customer/updateOrderStatus")
+    ResponseEntity<Object> updateStatusCodeOrder(@RequestBody String json) {
+        return orderService.updateStatusOrder(json);
+    }
+
+    @GetMapping("customer/findById/{customerId}")
+    public ResponseEntity<ResponseObject> getCustomerById(@PathVariable Integer customerId) {
+        return userService.findCustomerById(customerId);
+    }
+
 
 
 }

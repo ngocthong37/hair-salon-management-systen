@@ -9,6 +9,7 @@ import com.hairsalon.respository.CartRepository;
 import com.hairsalon.respository.ProductItemRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,10 @@ public class CartItemService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    public Integer getCustomerCarts(int customerId) {
+        return cartRepository.findCartIdsByCustomerId(customerId);
+    }
 
     public ResponseEntity<ResponseObject> addToCart(String json) {
         ObjectMapper objectMapper = new ObjectMapper();
