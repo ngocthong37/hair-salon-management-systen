@@ -189,7 +189,7 @@
                                                     <table width="100%" cellspacing="0" cellpadding="0">
                                                         <tbody>
                                                         <tr>
-                                                            <td class="esd-block-image es-infoblock made_with" align="center" style="font-size:0"><a target="_blank" href="https://viewstripo.email/?utm_source=templates&utm_medium=email&utm_campaign=auto_and_moto2&utm_content=information_needed"><img src="https://ebarcck.stripocdn.email/content/guids/CABINET_09023af45624943febfa123c229a060b/images/7911561025989373.png" alt="" width="125" style="display: block;"></a></td>
+                                                            <td class="esd-block-image es-infoblock made_with" align="center" style="font-size:0"><a target="_blank" href=""><img src="https://ebarcck.stripocdn.email/content/guids/CABINET_09023af45624943febfa123c229a060b/images/7911561025989373.png" alt="" width="125" style="display: block;"></a></td>
                                                         </tr>
                                                         </tbody>
                                                     </table></td>
