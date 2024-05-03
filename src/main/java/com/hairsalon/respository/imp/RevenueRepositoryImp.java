@@ -23,7 +23,7 @@ public class RevenueRepositoryImp implements IRevenueRepository {
     public Double getRevenueFromService() {
         Double res = 0.0;
         StringBuilder hql = new StringBuilder("Select SUM(SH.price) from Appointment A INNER" +
-                " JOIN ServiceHair SH ON A.serviceHair.id = SH.id AND A.appointmentStatus.id = 3");
+                " JOIN ServiceHair SH ON A.serviceHair.id = SH.id AND A.appointmentStatus.id = 4");
         try {
             Session session = sessionFactory.openSession();
             Query query = session.createQuery(hql.toString());
@@ -42,7 +42,7 @@ public class RevenueRepositoryImp implements IRevenueRepository {
     public Double getRevenueFromProduct() {
         Double res = 0.0;
         StringBuilder hql = new StringBuilder("Select SUM(OT.price) from Order O INNER" +
-                " JOIN OrderItem OT ON O.id = OT.order.id AND O.orderStatus.id = 3");
+                " JOIN OrderItem OT ON O.id = OT.order.id AND O.orderStatus.id = 5");
         try {
             Session session = sessionFactory.getCurrentSession();
             Query query = session.createQuery(hql.toString());
@@ -61,7 +61,7 @@ public class RevenueRepositoryImp implements IRevenueRepository {
     public Double getRevenueFromServiceByYear(Integer year) {
         Double res = 0.0;
         StringBuilder hql = new StringBuilder("Select SUM(SH.price) from Appointment A INNER" +
-                " JOIN ServiceHair SH ON A.serviceHair.id = SH.id AND A.appointmentStatus.id = 3 and YEAR(A.appointmentDate) = :year");
+                " JOIN ServiceHair SH ON A.serviceHair.id = SH.id AND A.appointmentStatus.id = 4 and YEAR(A.appointmentDate) = :year");
         try {
             Session session = sessionFactory.getCurrentSession();
             Query query = session.createQuery(hql.toString());
@@ -81,7 +81,7 @@ public class RevenueRepositoryImp implements IRevenueRepository {
     public Double getRevenueFromServiceByMonth(Integer year, Integer month) {
         Double res = 0.0;
         StringBuilder hql = new StringBuilder("Select SUM(SH.price) from Appointment A INNER" +
-                " JOIN ServiceHair SH ON A.serviceHair.id = SH.id AND A.appointmentStatus.id = 3 and MONTH(A.appointmentDate) = :month " +
+                " JOIN ServiceHair SH ON A.serviceHair.id = SH.id AND A.appointmentStatus.id = 4 and MONTH(A.appointmentDate) = :month " +
                 "AND YEAR(A.appointmentDate) = :year");
         try {
             Session session = sessionFactory.getCurrentSession();
