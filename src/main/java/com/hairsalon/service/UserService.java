@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hairsalon.Enum.Role;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.entity.User;
 import com.hairsalon.model.UserModel;
@@ -20,7 +21,6 @@ import java.util.*;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-
     public ResponseEntity<ResponseObject> findAllCustomer() {
         List<User> userList = new ArrayList<>();
         userList = userRepository.findAllCustomer();
@@ -172,35 +172,5 @@ public class UserService {
         }
 
     }
-
-    public ResponseEntity<Object> addEmployee(String json){
-        JsonNode jsonNode;
-        JsonMapper jsonMapper = new JsonMapper();
-        try {
-            jsonNode = jsonMapper.readTree(json);
-            Integer id = jsonNode.get("id") != null ? jsonNode.get("id").asInt() : -1;
-            String fullName = jsonNode.get("fullName") != null ? jsonNode.get("fullName").asText() : "";
-            String address = jsonNode.get("address") != null ? jsonNode.get("address").asText() : null;
-            String phoneNumber = jsonNode.get("phoneNumber") != null ? jsonNode.get("phoneNumber").asText() : "";
-            
-            Optional<User> userOptional = userRepository.findById(id);
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                user.setFullName(fullName);
-                user.setAddress(address);
-                user.setPhoneNumber(phoneNumber);
-                User updatedUser = userRepository.save(user);
-                if (updatedUser.getId() > 0) {
-                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", user.getId()));
-                }
-            }
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ERROR", "Have error when update user", ""));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Error", e.getMessage(), ""));
-        }
-    }
-
 
 }
