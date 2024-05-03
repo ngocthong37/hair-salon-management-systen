@@ -63,6 +63,10 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> deleteCartItemById(@PathVariable Integer id) {
         return cartItemService.deleteCartItem(id);
     }
+    @GetMapping("customer/getCartByCustomerId/{customerId}")
+    public Integer getCartByCustomerId(@PathVariable Integer customerId) {
+        return cartItemService.getCustomerCarts(customerId);
+    }
 
     @DeleteMapping("customer/deleteAllCartItemByCartId/{cartId}")
     public ResponseEntity<ResponseObject> deleteAllCartItemByCartId(@PathVariable Integer cartId) {
