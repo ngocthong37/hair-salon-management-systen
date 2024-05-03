@@ -32,7 +32,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             "TIMESTAMP(CONCAT(A.appointmentDate, ' ', A.appointmentTime)), CURRENT_TIMESTAMP()))")
     List<Appointment> findAppointmentForEmployee(@Param("employeeId") Integer customerId);
 
-
+    @Query("SELECT A FROM Appointment A " +
+            "WHERE A.user.id = :employeeId " +
+            "AND A.appointmentStatus.id = 4 " +
+            "ORDER BY FUNCTION('ABS', FUNCTION('TIMESTAMPDIFF', SECOND, " +
+            "TIMESTAMP(CONCAT(A.appointmentDate, ' ', A.appointmentTime)), CURRENT_TIMESTAMP()))")
+    List<Appointment> findAppointmentDoneByEmployee(@Param("employeeId") Integer customerId);
 
 
 

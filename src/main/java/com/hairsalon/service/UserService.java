@@ -118,15 +118,27 @@ public class UserService {
             String fullName = jsonNode.get("fullName") != null ? jsonNode.get("fullName").asText() : "";
             String address = jsonNode.get("address") != null ? jsonNode.get("address").asText() : null;
             String phoneNumber = jsonNode.get("phoneNumber") != null ? jsonNode.get("phoneNumber").asText() : "";
+            String userName = jsonNode.get("userName") != null ? jsonNode.get("userName").asText() : "";
             Optional<User> userOptional = userRepository.findById(id);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 user.setFullName(fullName);
                 user.setAddress(address);
                 user.setPhoneNumber(phoneNumber);
+                user.setUserName(userName);
                 User updatedUser = userRepository.save(user);
+                ObjectMapper objectMapper = new ObjectMapper();
+                ArrayNode dataArray = objectMapper.createArrayNode();
+                List<String> response = new ArrayList<>();
+                response.add(id.toString());
+                response.add(userName);
+                for (String value : response) {
+                    ObjectNode objectNode = objectMapper.createObjectNode();
+                    objectNode.put("value", value);
+                    dataArray.add(objectNode);
+                };
                 if (updatedUser.getId() > 0) {
-                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", user.getId()));
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", dataArray));
                 }
             }
             return ResponseEntity.status(HttpStatus.OK)
@@ -149,10 +161,10 @@ public class UserService {
             if (userOptional.isPresent()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 ArrayNode dataArray = objectMapper.createArrayNode();
-                List<String> response = new ArrayList<>();
                 User user = userOptional.get();
                 user.setStatus(status);
                 User updatedUser = userRepository.save(user);
+                List<String> response = new ArrayList<>();
                 response.add(id.toString());
                 response.add(status);
                 for (String value : response) {
