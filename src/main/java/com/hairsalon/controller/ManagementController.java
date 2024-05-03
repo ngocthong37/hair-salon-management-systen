@@ -104,6 +104,12 @@ public class ManagementController {
         return userService.updateStatusUser(json);
     }
 
+
+    @GetMapping ("employee/findAllAppointment/{employeeId}")
+    public ResponseEntity<ResponseObject> findAllAppointmentForEmployee(@PathVariable Integer employeeId) {
+        return appointmentService.getAllAppointmentForEmployee(employeeId);
+    }
+
     @GetMapping("appointments/findAll")
     ResponseEntity<ResponseObject> findAll() {
         return appointmentService.getAll();

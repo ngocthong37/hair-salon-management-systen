@@ -28,10 +28,7 @@ public class UserController {
     public ResponseEntity<ResponseObject> findAllOrder(@PathVariable Integer id) {
         return orderService.findAllByStatusId(id);
     }
-    @PutMapping("ordered/confirm")
-    ResponseEntity<Object> updateStatusCodeOrder(@RequestBody String json) {
-        return orderService.updateStatusOrder(json);
-    }
+
 
     @PutMapping("updateUserProfile")
     ResponseEntity<Object> updateUserProfile(@RequestBody String json) {

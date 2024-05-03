@@ -71,5 +71,10 @@ public class CustomerController {
         return appointmentService.getAllByCustomerId(id);
     }
 
+    @PutMapping("customer/updateOrderStatus")
+    ResponseEntity<Object> updateStatusCodeOrder(@RequestBody String json) {
+        return orderService.updateStatusOrder(json);
+    }
+
 
 }
