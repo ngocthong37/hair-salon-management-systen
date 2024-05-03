@@ -47,7 +47,7 @@ public class ManagementController {
         return revenueService.getRevenueFromServiceByYear(year);
     }
 
-    @GetMapping("revenueService/{year}/{month}")
+    @GetMapping("revenueFromServiceByMonth/{year}/{month}")
     public ResponseEntity<ResponseObject> getTotalRevenueFromServiceByYear(@PathVariable Integer year, @PathVariable Integer month) {
         return revenueService.getRevenueFromServiceByMonth(year, month);
     }
