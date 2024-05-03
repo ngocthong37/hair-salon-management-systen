@@ -124,7 +124,7 @@ public class ServiceHairService {
                 model.put("name", saveServiceHair.getServiceName());
                 model.put("price", saveServiceHair.getPrice() + " VND");
                 model.put("description", saveServiceHair.getDescription());
-//                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo dịch vụ mới", model);
+                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo dịch vụ mới", model);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", saveServiceHair.getId()));
             }
             else {
