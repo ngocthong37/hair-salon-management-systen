@@ -175,7 +175,7 @@ public class OrderService {
                 orderItemsJSON.add(orderItemJSON);
             }
             model.put("orderItems", orderItemsJSON);
-            emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt hàng thành công", model);
+//            emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt hàng thành công", model);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("OK", "Successfully", ""));
         } catch (Exception e) {
