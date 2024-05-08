@@ -56,6 +56,26 @@ public class ProductItemService {
         }
     }
 
+    public ResponseEntity<ResponseObject> findById(Integer id){
+        Optional<ProductItem> productItemOptional = productItemRepository.findById(id);
+        List<ProductItemModel> productItemList = new ArrayList<>();
+        if (productItemOptional.isPresent()){
+            ProductItem productItem = productItemOptional.get();
+            ProductItemModel productItemModel = new ProductItemModel();
+            productItemModel.setId(productItem.getId());
+            productItemModel.setProductItemName(productItem.getProductItemName());
+            productItemModel.setPrice(productItem.getPrice());
+            productItemModel.setImageUrl(productItem.getImageUrl());
+            productItemModel.setStatus(productItem.getStatus());
+            productItemModel.setQuantityInStock(productItem.getQuantityInStock());
+            productItemModel.setWarrantyTime(productItem.getWarrantyTime());
+            productItemModel.setDescription(productItem.getDescription());
+            productItemList.add(productItemModel);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", productItemList));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
+    }
+
     public ResponseEntity<Object> add(String json) {
         JsonNode jsonNode;
         JsonMapper jsonMapper = new JsonMapper();

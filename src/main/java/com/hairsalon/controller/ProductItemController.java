@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(path = "/api/v1/")
 public class ProductItemController {
 
@@ -17,6 +18,11 @@ public class ProductItemController {
     @GetMapping("productItem/findAll")
     public ResponseEntity<ResponseObject> findAll() {
         return productItemService.findAll();
+    }
+
+    @GetMapping("productItem/findById/{id}")
+    public ResponseEntity<ResponseObject> findById(@PathVariable Integer id) {
+        return productItemService.findById(id);
     }
 
     @PostMapping("management/productItem/add")
