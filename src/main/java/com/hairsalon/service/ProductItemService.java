@@ -113,7 +113,7 @@ public class ProductItemService {
                 model.put("price", saveProduct.getPrice() + " VND");
                 model.put("number", saveProduct.getQuantityInStock());
                 model.put("description", saveProduct.getDescription());
-                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo sản phẩm mới", model);
+//                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo sản phẩm mới", model);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", saveProduct.getId()));
             }
                 return ResponseEntity.status(HttpStatus.OK)

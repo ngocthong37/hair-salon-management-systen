@@ -157,7 +157,7 @@ public class AppointmentService {
                 model.put("appointmentTime", savedAppointment.getAppointmentTime());
                 model.put("appointmentDate", savedAppointment.getAppointmentDate());
                 model.put("salonAddress", savedAppointment.getSalon().getAddress());
-                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt lịch thành công", model);
+//                emailSendService.sendMail("thongnguyenngoc3738@gmail.com", cc, "Thông báo đặt lịch thành công", model);
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("OK", "Successfully", ""));
             } else {
