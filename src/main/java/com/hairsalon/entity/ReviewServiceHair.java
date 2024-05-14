@@ -1,5 +1,6 @@
 package com.hairsalon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,9 +23,11 @@ public class ReviewServiceHair extends BaseEntity {
     private String comment;
 
 
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "service_id")
     private ServiceHair serviceHair;
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "customer_id")
     private User customer;
