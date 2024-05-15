@@ -8,6 +8,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -39,6 +42,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             "TIMESTAMP(CONCAT(A.appointmentDate, ' ', A.appointmentTime)), CURRENT_TIMESTAMP()))")
     List<Appointment> findAppointmentDoneByEmployee(@Param("employeeId") Integer customerId);
 
-
+    @Query("SELECT SUM(a.serviceHair.price) FROM Appointment a " +
+            "WHERE (a.appointmentDate >= :startDate AND a.appointmentDate <= :endDate) AND a.appointmentStatus.id >= 4")
+    Double findRevenueBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 }

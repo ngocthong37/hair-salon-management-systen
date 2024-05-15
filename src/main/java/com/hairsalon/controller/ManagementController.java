@@ -3,10 +3,12 @@ package com.hairsalon.controller;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -128,6 +130,18 @@ public class ManagementController {
     @PutMapping("appointments/update-status")
     ResponseEntity<Object> updateStatusAppointment(@RequestBody String json) {
         return appointmentService.updateStatusAppointment(json);
+    }
+
+    @GetMapping("revenueService/between")
+    public ResponseEntity<ResponseObject> findRevenueServiceBetweenDates(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                          @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return revenueService.getRevenueServiceBetweenDate(startDate, endDate);
+    }
+
+    @GetMapping("revenueProduct/between")
+    public ResponseEntity<ResponseObject> findRevenueProductBetweenDates(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                  @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return revenueService.getRevenueProductBetweenDate(startDate, endDate);
     }
 
 

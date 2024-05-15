@@ -26,4 +26,7 @@ public interface ProductItemRepository extends JpaRepository<ProductItem, Intege
     @Modifying
     @Query("UPDATE ProductItem p SET p.imageUrl = :image where p.id = :productItemId")
     void updateImage(String image, Integer productItemId);
+
+
+
 }
