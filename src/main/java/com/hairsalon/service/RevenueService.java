@@ -4,12 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hairsalon.entity.ResponseObject;
+import com.hairsalon.respository.AppointmentRepository;
+import com.hairsalon.respository.OrderRepository;
 import com.hairsalon.respository.imp.RevenueRepositoryImp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +24,12 @@ import java.util.TreeMap;
 public class RevenueService {
     @Autowired
     RevenueRepositoryImp revenueImp;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     public ResponseEntity<ResponseObject> getRevenueFromService() {
         List<Double> listResult = new ArrayList<>(); // Khởi tạo danh sách mới
@@ -91,5 +102,39 @@ public class RevenueService {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", new ArrayList<>()));
         }
     }
+
+    public ResponseEntity<ResponseObject> getRevenueServiceBetweenDate(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        List<Double> listResult = new ArrayList<>();
+        Map<String, Object> results = new TreeMap<String, Object>();
+        Double price = appointmentRepository.findRevenueBetweenDates(startDate, endDate);
+        if (price == null) {
+            price = 0.0;
+        }
+        results.put("totalMoney", price);
+        listResult.add(price);
+        listResult.add(0.0);
+        results.size();
+        ArrayNode dataArray = convertListToArray(listResult);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", dataArray));
+    }
+
+    public ResponseEntity<ResponseObject> getRevenueProductBetweenDate(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        List<Double> listResult = new ArrayList<>();
+        Map<String, Object> results = new TreeMap<String, Object>();
+        Double price = orderRepository.findRevenueBetweenDates(startDate, endDate);
+        if (price == null) {
+            price = 0.0;
+        }
+        results.put("totalMoney", price);
+        listResult.add(price);
+        listResult.add(0.0);
+        results.size();
+        ArrayNode dataArray = convertListToArray(listResult);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", dataArray));
+    }
+
+
 
 }
