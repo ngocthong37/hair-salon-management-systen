@@ -33,8 +33,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/**",
-                        "/api/v1/services/**",
-                        "/api/v1/products/**",
                         "/v3/api-docs/**",
                         "/swagger-resources",
                         "/swagger-resources/**",
@@ -46,10 +44,7 @@ public class SecurityConfiguration {
                 )
                 .permitAll()
                 .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), EMPLOYEE_CREATE.name())
-                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), EMPLOYEE_READ.name())
-                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), EMPLOYEE_READ.name())
-                .requestMatchers("/api/v1/productItem/**").hasAnyRole(ADMIN.name(), EMPLOYEE.name())
-                .requestMatchers(POST,"/api/v1/productItem/**").hasAnyAuthority(ADMIN_CREATE.name(), EMPLOYEE_CREATE.name())
+                .requestMatchers(GET, "/api/v1/employee/**").hasAnyAuthority(ADMIN_READ.name(), EMPLOYEE_READ.name())
                 .anyRequest()
                 .authenticated()
                 .and()

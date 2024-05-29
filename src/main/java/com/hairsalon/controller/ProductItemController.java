@@ -6,7 +6,7 @@ import com.hairsalon.service.ProductItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/api/v1/")
 public class ProductItemController {
@@ -38,6 +38,11 @@ public class ProductItemController {
     @GetMapping("productItem/search/{productItemName}")
     public ResponseEntity<ResponseObject> findAllByProductItemName(@PathVariable String productItemName) {
         return productItemService.findByProductItemName(productItemName);
+    }
+
+    @GetMapping("productItem/findById/{productItemId}")
+    public ResponseEntity<ResponseObject> findProductItemById(@PathVariable Integer productItemId) {
+        return productItemService.findProductItemById(productItemId);
     }
 
 }

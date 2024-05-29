@@ -11,8 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(path = "/api/v1/management/")
 public class ManagementController {
     @Autowired

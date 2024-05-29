@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(path = "/api/v1/salon/")
 public class SalonController {
     @Autowired
