@@ -35,7 +35,7 @@ public class ProductItemService {
 
 
     public ResponseEntity<ResponseObject> findAll() {
-        List<ProductItem> productItemList = productItemRepository.findAllProductItem();
+        List<ProductItem> productItemList = productItemRepository.findAll();
         List<ProductItemModel> productItemModelList = productItemList.stream().map(
                 productItem -> {
                     ProductItemModel productItemModel = new ProductItemModel();
@@ -143,10 +143,11 @@ public class ProductItemService {
         try {
             jsonNode = jsonMapper.readTree(json);
             Integer productItemId = jsonNode.get("productItemId") != null ? jsonNode.get("productItemId").asInt() : -1;
+            String status = jsonNode.get("status") != null ? jsonNode.get("status").asText() : null;
             Optional<ProductItem> productItemOptional = productItemRepository.findById(productItemId);
             if (productItemOptional.isPresent()) {
                 ProductItem productItem = productItemOptional.get();
-                productItem.setStatus("NOT_OK");
+                productItem.setStatus(status);
                 productItemRepository.save(productItem);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", productItem.getId()));
             } else {

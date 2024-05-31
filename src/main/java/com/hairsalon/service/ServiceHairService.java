@@ -2,11 +2,9 @@ package com.hairsalon.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.hairsalon.entity.ProductImage;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.entity.ServiceHair;
 import com.hairsalon.entity.User;
-import com.hairsalon.model.HairServiceModel;
 import com.hairsalon.respository.ServiceHairRepository;
 import com.hairsalon.respository.UserRepository;
 import org.slf4j.Logger;
@@ -38,7 +36,7 @@ public class ServiceHairService {
 
     public ResponseEntity<ResponseObject> getAll() {
         List<ServiceHair> hairServiceList = null;
-        hairServiceList = serviceHairRepository.findAllServiceHair();
+        hairServiceList = serviceHairRepository.findAll();
         if (!hairServiceList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", hairServiceList));
         } else {
@@ -187,9 +185,10 @@ public class ServiceHairService {
         try {
             jsonNode = jsonMapper.readTree(json);
             Integer id = jsonNode.get("id") != null ? jsonNode.get("id").asInt() : null;
+            String status = jsonNode.get("status") != null ? jsonNode.get("status").asText() : null;
             Optional<ServiceHair> serviceHair = serviceHairRepository.findById(id);
             if (serviceHair.isPresent()) {
-                serviceHair.get().setStatus("NOT_OK");
+                serviceHair.get().setStatus(status);
                 ServiceHair updatedServiceHair =  serviceHairRepository.save(serviceHair.get());
                 if (updatedServiceHair.getId() > 0) {
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", updatedServiceHair.getId()));
