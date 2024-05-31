@@ -66,24 +66,17 @@ public class ServiceHairService {
     }
 
     public ResponseEntity<ResponseObject> findById(Integer id) {
-//        Optional<ServiceHair> hairServiceModel = new Optional<ServiceHair>();
-//        try {
-//            Map<String, Object> results = new TreeMap<String, Object>();
-//            hairServiceModel = serviceHairRepository.findById(id);
-//            results.put("hairService", hairServiceModel);
-//            if (results.size() > 0) {
-//                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
-//            }
-//            else {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ERROR", "Have error", ""));
-         //   }
+        Optional<ServiceHair> hairServiceModel = Optional.of(new ServiceHair());
+        try {
+            hairServiceModel = serviceHairRepository.findById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", hairServiceModel));
 
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ResponseObject("ERROR", "Have error:", e.getMessage()));
-//        }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Have error:", e.getMessage()));
+        }
     }
 
     public String uploadImage(MultipartFile file, String namePath, Integer serviceHairId) {

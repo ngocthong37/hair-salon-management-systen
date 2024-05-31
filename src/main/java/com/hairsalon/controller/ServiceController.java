@@ -19,6 +19,11 @@ public class ServiceController {
         return hairService.getAll();
     }
 
+    @GetMapping("services/findById/{id}")
+    public ResponseEntity<ResponseObject> findById(@PathVariable Integer id) {
+        return hairService.findById(id);
+    }
+
 
 
     @GetMapping("services/search/{serviceName}")
