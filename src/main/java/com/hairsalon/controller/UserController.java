@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping("ordered")
     public ResponseEntity<ResponseObject> findAllOrder() {
-        return orderService.findAll();
+        return orderService.findAllOrders();
     }
 
     @GetMapping("ordered/{id}")

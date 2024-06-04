@@ -30,6 +30,20 @@ public class ManagementController {
     private ProductItemService productItemService;
 
     @Autowired
+    private OrderService orderService;
+
+    @GetMapping("order/findAll")
+    public ResponseEntity<ResponseObject> getAllOrders() {
+        return orderService.findAllOrders();
+    }
+
+    @PutMapping("order/updateStatusOrder")
+    public ResponseEntity<Object> updateStatusOrder(@RequestBody String json) {
+        return orderService.updateStatusOrder(json);
+    }
+
+
+    @Autowired
     RevenueService revenueService;
     @GetMapping(value = "/services/{id}")
     public ResponseEntity<ResponseObject> getServiceById(@PathVariable Integer id) {
@@ -103,7 +117,7 @@ public class ManagementController {
         return userService.findEmployeeById(employeeId);
     }
 
-    @PostMapping ("employee/updateStatusUser")
+    @PutMapping ("employee/updateStatusUser")
     public ResponseEntity<Object> updateStatusUser(@RequestBody String json) {
         return userService.updateStatusUser(json);
     }

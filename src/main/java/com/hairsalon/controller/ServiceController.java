@@ -24,8 +24,6 @@ public class ServiceController {
         return hairService.findById(id);
     }
 
-
-
     @GetMapping("services/search/{serviceName}")
     public ResponseEntity<ResponseObject> findServiceByName(@PathVariable String serviceName) {
         return hairService.findByServiceName(serviceName);

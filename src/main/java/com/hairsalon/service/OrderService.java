@@ -40,13 +40,31 @@ public class OrderService {
     UserRepository userRepository;
 
 
-    public ResponseEntity<ResponseObject> findAll() {
-        Map<String, Object> results = new TreeMap<String, Object>();
-        List<Order> orderModelList = new ArrayList<>();
-        orderModelList = orderRepository.findAll();
-        results.put("orderList", orderModelList);
-        if (results.size() > 0) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", results));
+    public ResponseEntity<ResponseObject> findAllOrders() {
+        List<Order> orderList = orderRepository.findAll();
+        List<OrderModel> orderModelList = orderList.stream().map(order -> {
+            OrderModel orderModel = new OrderModel();
+            orderModel.setId(order.getId());
+            orderModel.setOrderDate(order.getOrderDate());
+            orderModel.setTotalPrice(order.getTotalPrice());
+            orderModel.setPaymentMethod(order.getPaymentMethod().getPaymentMethodName());
+            orderModel.setOrderStatus(order.getOrderStatus().getStatus());
+
+            List<OrderItemModel> orderItemModels = order.getOrderItems().stream().map(orderItem -> {
+                OrderItemModel orderItemModel = new OrderItemModel();
+                orderItemModel.setOrderItemId(orderItem.getId());
+                orderItemModel.setPrice(orderItem.getPrice());
+                orderItemModel.setQuantity(orderItem.getQuantity());
+                orderItemModel.setProductItemId(orderItem.getProductItem().getId());
+                orderItemModel.setProductItemUrl(orderItem.getProductItem().getImageUrl());
+                orderItemModel.setProductItemName(orderItem.getProductItem().getProductItemName());
+                return orderItemModel;
+            }).collect(Collectors.toList());
+            orderModel.setOrderItems(orderItemModels);
+            return orderModel;
+        }).collect(Collectors.toList());
+        if (!orderModelList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", orderModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));
         }
@@ -65,7 +83,6 @@ public class OrderService {
     }
 
     public ResponseEntity<ResponseObject> findAllByCustomerId(Integer customerId) {
-        Map<String, Object> results = new TreeMap<String, Object>();
         List<Order> orderList = orderRepository.findAllOrderByCustomerId(customerId);
         List<OrderModel> orderModelList = orderList.stream().map(order -> {
             OrderModel orderModel = new OrderModel();
@@ -88,9 +105,7 @@ public class OrderService {
             orderModel.setOrderItems(orderItemModels);
             return orderModel;
         }).collect(Collectors.toList());
-
-        results.put("result", orderModelList);
-        if (!results.isEmpty()) {
+        if (!orderModelList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Successfully", orderModelList));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Not found", "Not found", ""));

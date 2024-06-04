@@ -118,20 +118,17 @@ public class UserService {
             String fullName = jsonNode.get("fullName") != null ? jsonNode.get("fullName").asText() : "";
             String address = jsonNode.get("address") != null ? jsonNode.get("address").asText() : null;
             String phoneNumber = jsonNode.get("phoneNumber") != null ? jsonNode.get("phoneNumber").asText() : "";
-            String userName = jsonNode.get("userName") != null ? jsonNode.get("userName").asText() : "";
             Optional<User> userOptional = userRepository.findById(id);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 user.setFullName(fullName);
                 user.setAddress(address);
-                user.setPhoneNumber(phoneNumber);
-                user.setUserName(userName);
+                user.setPhoneNumber(phoneNumber);;
                 User updatedUser = userRepository.save(user);
                 ObjectMapper objectMapper = new ObjectMapper();
                 ArrayNode dataArray = objectMapper.createArrayNode();
                 List<String> response = new ArrayList<>();
                 response.add(id.toString());
-                response.add(userName);
                 for (String value : response) {
                     ObjectNode objectNode = objectMapper.createObjectNode();
                     objectNode.put("value", value);

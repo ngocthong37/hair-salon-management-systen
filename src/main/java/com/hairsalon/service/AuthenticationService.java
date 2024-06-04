@@ -43,17 +43,20 @@ public class AuthenticationService {
 
 
   public AuthenticationResponse register(RegisterRequest request) {
+    System.out.println("username: " + request.getUserName());
     var user = User.builder()
-        .userName(request.getUserName())
+        .name(request.getUserName())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(request.getRole())
-            .status("OK")
-            .phoneNumber("null")
-            .address("null")
-            .fullName("null")
+            .status("ACTIVE")
+            .userName(request.getUserName())
+            .phoneNumber("")
+            .address("")
+            .fullName("")
         .build();
     var savedUser = repository.save(user);
+    System.out.println("username: "+  savedUser.getEmail() + " " + savedUser.getName());
     Cart cart = new Cart();
     cart.setCustomer(savedUser);
     cartRepository.save(cart);
@@ -87,7 +90,7 @@ public class AuthenticationService {
               .address(address)
               .fullName(fullName)
               .phoneNumber(phoneNumber)
-              .status("OK")
+              .status("ACTIVE")
               .build();
       var savedUser = repository.save(user);
       if (savedUser.getPassword() != null) {
@@ -118,6 +121,13 @@ public class AuthenticationService {
     );
     var user = repository.findByEmail(request.getEmail())
         .orElseThrow();
+    if (user.getStatus().equals("NOT_ACTIVE")) {
+      return AuthenticationResponse.builder()
+              .accessToken("")
+              .refreshToken("")
+              .role("")
+              .build();
+    }
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
