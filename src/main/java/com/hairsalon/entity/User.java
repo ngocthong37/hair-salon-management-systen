@@ -24,8 +24,6 @@ public class User implements UserDetails {
     private String password;
     private String fullName;
     private String phoneNumber;
-    @Getter
-    private String name;
     private String address;
     private String status;
 
@@ -52,6 +50,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public String getName() {
+        return userName;
     }
 
 

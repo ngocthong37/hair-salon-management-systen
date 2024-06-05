@@ -83,7 +83,7 @@
                                                     <table width="100%" cellspacing="0" cellpadding="0">
                                                         <tbody>
                                                         <tr>
-                                                            <td class="esd-block-image" align="center" style="font-size:0"><a target="_blank" href="https://viewstripo.email"><img src="https://ebarcck.stripocdn.email/content/guids/CABINET_abfb312d1e049b1ac427ebe8570fb5c92d201e16a74ab48d703c965db0ce8ace/images/logo.jpg" alt="" style="display:block" width="189" class="adapt-img"></a></td>
+                                                            <td class="esd-block-image" align="center" style="font-size:0"><a target="_blank" href="https://viewstripo.email"><img src="https://www.shutterstock.com/image-vector/barbershop-hairdressing-salon-retro-poster-260nw-2063795648.jpg" alt="" style="display:block" width="189" class="adapt-img"></a></td>
                                                         </tr>
                                                         </tbody>
                                                     </table></td>
@@ -114,7 +114,7 @@
                                                             <td class="esd-block-text es-p20t es-p5b es-p20r es-p20l es-m-txt-l" align="left"><h2>Dear ${userName},</h2></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="esd-block-text es-p10t es-p20r es-p20l" align="left"><p>Chào mừng bạn đến với Cổng thông tin giữa Bách Hóa Xanh và Nhà cung cấp,</p></td>
+                                                            <td class="esd-block-text es-p10t es-p20r es-p20l" align="left"><p>Chào mừng bạn đến với Hair Salon,</p></td>
                                                         </tr>
                                                         <tr>
                                                             <td class="esd-block-text es-p10t es-p5b es-p20r es-p20l" align="left"><ul><li><p>Dưới đây là thông tin tài khoản của bạn</p>

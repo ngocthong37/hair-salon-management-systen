@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600, allowedHeaders = "Authorization, Content-Type")
 @Controller
 @RestController
 @RequestMapping(path = "/api/v1/")
@@ -45,7 +45,7 @@ public class CustomerController {
         return appointmentService.updateStatusAppointment(json);
     }
 
-    @GetMapping("orders/getAllOrdersByCustomerId/{customerId}")
+    @GetMapping("customer/orders/getAllOrdersByCustomerId/{customerId}")
     public ResponseEntity<ResponseObject> findAllOrderByCustomerId(@PathVariable Integer customerId) {
         return orderService.findAllByCustomerId(customerId);
     }
@@ -93,6 +93,11 @@ public class CustomerController {
     @GetMapping("customer/findById/{customerId}")
     public ResponseEntity<ResponseObject> getCustomerById(@PathVariable Integer customerId) {
         return userService.findCustomerById(customerId);
+    }
+
+    @GetMapping("customer/employee/findAll")
+    public ResponseEntity<ResponseObject> findAllEmployee() {
+        return userService.findAllEmployee();
     }
 
 

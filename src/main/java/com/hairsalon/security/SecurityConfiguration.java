@@ -10,10 +10,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import static com.hairsalon.Enum.Permission.*;
-import static com.hairsalon.Enum.Role.ADMIN;
-import static com.hairsalon.Enum.Role.EMPLOYEE;
+import static com.hairsalon.Enum.Role.*;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -30,9 +32,16 @@ public class SecurityConfiguration {
         http
                 .csrf()
                 .disable()
+                .cors() // Enable CORS configuration
+                .and()
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/v1/**",
+                        "/api/v1/auth/**",
+                        "api/v1/productItem/**",
+                        "api/v1/services/**",
+                        "api/v1/salon/**",
+                        "api/v1/review/**",
+                        "api/v1/news/**",
                         "/v3/api-docs/**",
                         "/swagger-resources",
                         "/swagger-resources/**",
@@ -43,8 +52,11 @@ public class SecurityConfiguration {
                         "/swagger-ui.html"
                 )
                 .permitAll()
-                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), EMPLOYEE_CREATE.name())
-                .requestMatchers(GET, "/api/v1/employee/**").hasAnyAuthority(ADMIN_READ.name(), EMPLOYEE_READ.name())
+                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name())
+                .requestMatchers("/api/v1/appointment/**").hasAnyRole(CUSTOMER.name(), EMPLOYEE.name())
+                .requestMatchers("/api/v1/employee/**").hasAnyRole(EMPLOYEE.name(), ADMIN.name())
+                .requestMatchers("/api/v1/customer/**").hasAnyRole(CUSTOMER.name())
+                .requestMatchers("/api/v1/users/**").hasAnyRole(CUSTOMER.name(), EMPLOYEE.name(), ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -53,8 +65,20 @@ public class SecurityConfiguration {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-        ;
+                .logout();
+
         return http.build();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }

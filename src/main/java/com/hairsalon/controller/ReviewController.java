@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(path = "/api/v1/customer/")
+@RequestMapping(path = "/api/v1/")
 public class ReviewController {
 
     @Autowired
     ReviewService reviewService;
 
 
-    @PostMapping("/addReviewService")
+    @PostMapping("customer/addReviewService")
     public ResponseEntity<Object> addComment(@RequestBody String json) {
         return reviewService.add(json);
     }
 
-    @GetMapping("/review/findToReview/{serviceHairId}/{customerId}")
+    @GetMapping("customer/review/findToReview/{serviceHairId}/{customerId}")
     public ResponseEntity<ResponseObject> findToReview(@PathVariable Integer serviceHairId, @PathVariable Integer customerId) {
         return reviewService.isReview(serviceHairId, customerId);
     }

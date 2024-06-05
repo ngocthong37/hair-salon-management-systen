@@ -287,7 +287,6 @@ public class AppointmentService {
 
             if (optionalAppointment.isPresent()) {
                 Appointment appointment = optionalAppointment.get();
-
                 AppointmentStatus appointmentStatus = new AppointmentStatus();
                 appointmentStatus.setId(statusCode);
 

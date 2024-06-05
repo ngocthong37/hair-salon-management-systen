@@ -45,7 +45,7 @@ public class AuthenticationService {
   public AuthenticationResponse register(RegisterRequest request) {
     System.out.println("username: " + request.getUserName());
     var user = User.builder()
-        .name(request.getUserName())
+        .userName(request.getUserName())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(request.getRole())
@@ -56,7 +56,7 @@ public class AuthenticationService {
             .fullName("")
         .build();
     var savedUser = repository.save(user);
-    System.out.println("username: "+  savedUser.getEmail() + " " + savedUser.getName());
+    System.out.println("username: "+  savedUser.getEmail() + " " + savedUser.getUsername());
     Cart cart = new Cart();
     cart.setCustomer(savedUser);
     cartRepository.save(cart);
@@ -137,6 +137,7 @@ public class AuthenticationService {
             .refreshToken(refreshToken)
             .role(String.valueOf(user.getRole()))
             .accountId(user.getId())
+            .userName(user.getName())
         .build();
   }
 

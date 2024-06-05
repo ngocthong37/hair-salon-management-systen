@@ -1,5 +1,6 @@
 package com.hairsalon.controller;
 
+import com.hairsalon.entity.AuthenticationResponse;
 import com.hairsalon.entity.ResponseObject;
 import com.hairsalon.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,16 @@ public class ManagementController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @PostMapping("/addEmployee")
+    public ResponseEntity<AuthenticationResponse> addEmployee(
+            @RequestBody String json
+    ) {
+        return ResponseEntity.ok(authenticationService.addEmployee(json));
+    }
 
     @GetMapping("order/findAll")
     public ResponseEntity<ResponseObject> getAllOrders() {
@@ -80,10 +91,7 @@ public class ManagementController {
         return serviceHair.update(json);
     }
 
-    @PutMapping("serviceHair/updateStatus")
-    public ResponseEntity<Object> updateStatusServiceHair(@RequestBody String json) {
-        return serviceHair.updateStatus(json);
-    }
+
 
     @PostMapping("hairService/uploadImageServiceHair")
     public String uploadImageServiceHair(@RequestParam("namePath") String namePath, @RequestParam("file") MultipartFile file,
@@ -123,30 +131,18 @@ public class ManagementController {
     }
 
 
-    @GetMapping ("employee/findAllAppointment/{employeeId}")
-    public ResponseEntity<ResponseObject> findAllAppointmentForEmployee(@PathVariable Integer employeeId) {
-        return appointmentService.getAllAppointmentForEmployee(employeeId);
-    }
-
     @GetMapping ("employee/findAllAppointmentDone/{employeeId}")
     public ResponseEntity<ResponseObject> findAllAppointmentDoneByEmployee(@PathVariable Integer employeeId) {
         return appointmentService.getAllAppointmentDoneByEmployee(employeeId);
     }
 
-    @GetMapping("appointments/findAll")
-    ResponseEntity<ResponseObject> findAll() {
-        return appointmentService.getAll();
-    }
+
 
     @GetMapping("appointments/{statusId}")
     ResponseEntity<ResponseObject> getAllByStatusId(@PathVariable Integer statusId) {
         return appointmentService.getAllByStatusId(statusId);
     }
 
-    @PutMapping("appointments/update-status")
-    ResponseEntity<Object> updateStatusAppointment(@RequestBody String json) {
-        return appointmentService.updateStatusAppointment(json);
-    }
 
     @GetMapping("revenueService/between")
     public ResponseEntity<ResponseObject> findRevenueServiceBetweenDates(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
