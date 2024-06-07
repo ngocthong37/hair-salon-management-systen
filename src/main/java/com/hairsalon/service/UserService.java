@@ -71,7 +71,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<ResponseObject> findCustomerById(Integer customerId) {
+    public ResponseEntity<ResponseObject> findUserById(Integer customerId) {
         Optional<User> customer = userRepository.findById(customerId);
         List<UserModel> userList = new ArrayList<>();
         if (customer.isPresent()) {

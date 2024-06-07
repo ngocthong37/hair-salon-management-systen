@@ -115,11 +115,6 @@ public class ManagementController {
         return userService.findAllEmployee();
     }
 
-    @GetMapping("customer/findById/{customerId}")
-    public ResponseEntity<ResponseObject> getCustomerById(@PathVariable Integer customerId) {
-        return userService.findCustomerById(customerId);
-    }
-
     @GetMapping("employee/findById/{employeeId}")
     public ResponseEntity<ResponseObject> getEmployeeById(@PathVariable Integer employeeId) {
         return userService.findEmployeeById(employeeId);

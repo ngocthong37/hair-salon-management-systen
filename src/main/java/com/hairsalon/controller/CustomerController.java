@@ -90,9 +90,9 @@ public class CustomerController {
         return orderService.updateStatusOrder(json);
     }
 
-    @GetMapping("customer/findById/{customerId}")
+    @GetMapping("users/findById/{customerId}")
     public ResponseEntity<ResponseObject> getCustomerById(@PathVariable Integer customerId) {
-        return userService.findCustomerById(customerId);
+        return userService.findUserById(customerId);
     }
 
     @GetMapping("customer/employee/findAll")
